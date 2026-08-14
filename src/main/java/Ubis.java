@@ -1,10 +1,10 @@
-public class Duke {
+public class Ubis {
     public static void main(String[] args) {
-        String banner = " ____        _        \n"
-                + "|  _ \\ _   _| | _____ \n"
-                + "| | | | | | | |/ / _ \\\n"
-                + "| |_| | |_| |   <  __/\n"
-                + "|____/ \\__,_|_|\\_\\___|\n";
+        String banner = " _   _ ____ ___ ____  \n"
+                + "| | | | __ )|_ _/ ___| \n"
+                + "| | | |  _ \\ | |\\___ \\ \n"
+                + "| |_| | |_) || | ___) |\n"
+                + " \\___/|____/|___|____/ \n";
         System.out.println(banner);
     }
 }
