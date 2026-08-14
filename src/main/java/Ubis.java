@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 public class Ubis {
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     public static void main(String[] args) {
         welcome();
     }
@@ -33,13 +35,13 @@ public class Ubis {
     private static void exit() {
         System.out.println("Goodbye. See you soon!");
         printDashLine();
+        SCANNER.close();
         System.exit(0);
     }
 
     // Method to get a line of input from the user.
     private static String receiveCommand() {
-        Scanner scanner = new Scanner(System.in);
-        String command = scanner.nextLine();
+        String command = SCANNER.nextLine();
         printDashLine();
         return command;
     }
