@@ -88,7 +88,12 @@ public class Ubis {
                     System.out.println("Please add the task number you want to mark!");
                     System.out.println("Example: \"mark 4\" if you want to mark the fourth task.");
                 } else {
-                    taskList.markTask(Integer.parseInt(argument));
+                    try {
+                        taskList.markTask(Integer.parseInt(argument));
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid task number of: " + argument);
+                        System.out.println("Please try again!");
+                    }
                 }
                 break;
             case "unmark":
@@ -96,7 +101,12 @@ public class Ubis {
                     System.out.println("Please add the task number you want to unmark!");
                     System.out.println("Example: \"unmark 4\" if you want to unmark the fourth task.");
                 } else {
-                    taskList.unmarkTask(Integer.parseInt(argument));
+                    try {
+                        taskList.unmarkTask(Integer.parseInt(argument));
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid task number of: " + argument);
+                        System.out.println("Please try again!");
+                    }
                 }
                 break;
             default:
