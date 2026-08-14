@@ -1,10 +1,12 @@
 // Class that represents a task
-public class Task {
+public abstract class Task {
     private String name;
     private boolean done;
+    private String symbol;
 
-    public Task(String name) {
+    public Task(String name, String symbol) {
         this.name = name;
+        this.symbol = symbol;
         this.done = false;
     }
 
@@ -18,6 +20,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + (this.done ? "X" : " ") + "] " + this.name;
+        return "[" + symbol + "]" + "[" + (this.done ? "X" : " ") + "] " + this.name;
     }
 }

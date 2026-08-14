@@ -110,7 +110,7 @@ public class Ubis {
                 }
                 break;
             default:
-                taskList.addTask(command);
+                taskList.addTask(new String[] { input }, TaskList.TaskType.TODO);
         }
         printDashLine();
     }

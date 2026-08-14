@@ -4,14 +4,25 @@ import java.util.List;
 // Class that can register and track tasks
 public class TaskList {
     private List<Task> tasks;
+    public static enum TaskType { TODO, DEADLINE, EVENT };
 
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
-    public void addTask(String taskName) {
-        tasks.add(new Task(taskName));
-        System.out.println("added: " + taskName);
+    public void addTask(String[] args, TaskType type) {
+        switch (type) {
+            case TaskType.TODO:
+                tasks.add(new Todo(args[0]));
+                break;
+            case TaskType.DEADLINE:
+                tasks.add(new Deadline(args[0], args[1]));
+                break;
+            case TaskType.EVENT:
+                tasks.add(new Event(args[0], args[1], args[2]));
+                break;
+        }
+        System.out.println("added: " + args[0]);
     }
 
     public void listTasks() {
