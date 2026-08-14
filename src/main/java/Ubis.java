@@ -81,6 +81,9 @@ public class Ubis {
                 System.out.println("  list - list all tasks");
                 System.out.println("  mark n - mark the nth task as done");
                 System.out.println("  unmark n - mark the nth task as NOT done");
+                System.out.println("  todo task-name - add a task");
+                System.out.println("  deadline task-name /by task-deadline - add a deadline");
+                System.out.println("  event task-name /from start /to end - add an event");
                 System.out.println("  bye - exit the program");
                 break;
             case "mark":
@@ -109,8 +112,42 @@ public class Ubis {
                     }
                 }
                 break;
+            case "todo":
+                if (argument == null || argument.isEmpty()) {
+                    System.out.println("Missing task name, please do \"todo task-name\" instead.");
+                } else {
+                    taskList.addTask(new String[] { argument }, TaskList.TaskType.TODO);
+                }
+                break;
+            case "deadline":
+                if (argument == null) {
+                    System.out.println("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
+                } else {
+                    String[] arguments = argument.split(" /by ");
+                    if (arguments.length < 2 || arguments[0] == null ||
+                            arguments[1] == null || arguments[0].isEmpty() || arguments[1].isEmpty()) {
+                        System.out.println("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
+                    } else {
+                        taskList.addTask(new String[] { arguments[0], arguments[1] }, TaskList.TaskType.DEADLINE);
+                    }
+                }
+                break;
+            case "event":
+                if (argument == null) {
+                    System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+                } else {
+                    String[] arguments = argument.split(" /from | /to ");
+                    if (arguments.length < 3 || arguments[0] == null ||
+                            arguments[1] == null || arguments[2] == null
+                            || arguments[0].isEmpty() || arguments[1].isEmpty() || arguments[2].isEmpty()) {
+                        System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+                    } else {
+                        taskList.addTask(new String[] { arguments[0], arguments[1], arguments[2] }, TaskList.TaskType.EVENT);
+                    }
+                }
+                break;
             default:
-                taskList.addTask(new String[] { input }, TaskList.TaskType.TODO);
+                System.out.println("Unknown command. Type \"help\" for commands!");
         }
         printDashLine();
     }
