@@ -12,16 +12,21 @@ public class Ubis {
                 + "| |_| | |_) || | ___) |\n"
                 + " \\___/|____/|___|____/ \n";
 
-        System.out.println("_".repeat(30));
+        printDashLine();
         System.out.println(banner);
         System.out.println("Hello! I am Ubis.");
         System.out.println("What can I do for you?");
+        printDashLine();
+    }
+
+    private static void printDashLine() {
         System.out.println("_".repeat(30));
     }
 
     // Handle exit of the bot, for now just print a message
     private static void exit() {
         System.out.println("Goodbye. See you soon!");
+        printDashLine();
         System.exit(0);
     }
 }
