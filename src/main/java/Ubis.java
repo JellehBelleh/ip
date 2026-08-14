@@ -22,5 +22,6 @@ public class Ubis {
     // Handle exit of the bot, for now just print a message
     private static void exit() {
         System.out.println("Goodbye. See you soon!");
+        System.exit(0);
     }
 }
