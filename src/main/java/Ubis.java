@@ -50,7 +50,6 @@ public class Ubis {
     }
 
     // Handles the incoming command
-    // For now, just echo input besides "bye" which exits
     private static void handleCommand(String command) {
         switch (command) {
             case "bye":
