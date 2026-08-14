@@ -7,7 +7,7 @@ public class Ubis {
         welcome();
     }
 
-    // Welcomes the user with print messages
+    // Welcomes the user with print messages, then awaits commands
     private static void welcome() {
         String banner = " _   _ ____ ___ ____  \n"
                 + "| | | | __ )|_ _/ ___| \n"
@@ -31,7 +31,9 @@ public class Ubis {
         System.out.println("_".repeat(30));
     }
 
-    // Handle exit of the bot, for now just print a message
+    // Handle exit of the bot.
+    // 1. Prints goodbye
+    // 2. Cleans up resources
     private static void exit() {
         System.out.println("Goodbye. See you soon!");
         printDashLine();
