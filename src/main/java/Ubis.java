@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class Ubis {
     private static final Scanner SCANNER = new Scanner(System.in);
+    private static final TaskList taskList = new TaskList();
 
     public static void main(String[] args) {
         welcome();
@@ -51,11 +52,16 @@ public class Ubis {
     // Handles the incoming command
     // For now, just echo input besides "bye" which exits
     private static void handleCommand(String command) {
-        if (command.equals("bye")) {
-            exit();
-        } else {
-            System.out.println("Ubis: " + command);
-            printDashLine();
+        switch (command) {
+            case "bye":
+                exit();
+                break;
+            case "list":
+                taskList.listTasks();
+                break;
+            default:
+                taskList.addTask(command);
         }
+        printDashLine();
     }
 }
