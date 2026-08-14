@@ -84,6 +84,7 @@ public class Ubis {
                 System.out.println("  todo task-name - add a task");
                 System.out.println("  deadline task-name /by task-deadline - add a deadline");
                 System.out.println("  event task-name /from start /to end - add an event");
+                System.out.println("  delete n - delete the nth task");
                 System.out.println("  bye - exit the program");
                 break;
             case "mark":
@@ -106,6 +107,19 @@ public class Ubis {
                 } else {
                     try {
                         taskList.unmarkTask(Integer.parseInt(argument));
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid task number of: " + argument);
+                        System.out.println("Please try again!");
+                    }
+                }
+                break;
+            case "delete":
+                if (argument == null) {
+                    System.out.println("Please add the task number you want to delete!");
+                    System.out.println("Example: \"delete 4\" if you want to delete the fourth task.");
+                } else {
+                    try {
+                        taskList.removeTask(Integer.parseInt(argument));
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid task number of: " + argument);
                         System.out.println("Please try again!");

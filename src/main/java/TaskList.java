@@ -18,6 +18,18 @@ public class TaskList {
         System.out.println("added: " + task);
     }
 
+    public void removeTask(int num) {
+        if (num < 1 || num > tasks.size()) {
+            System.out.println("Sorry, there is no task number " + num + ". Please try again.");
+            return;
+        }
+
+        int index = num - 1;
+        String taskDescription = tasks.get(index).toString();
+        tasks.remove(index);
+        System.out.println("Okay, I've deleted " + taskDescription);
+    }
+
     public void listTasks() {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + ": " + tasks.get(i));
