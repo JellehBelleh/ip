@@ -10,19 +10,12 @@ public class TaskList {
         this.tasks = new ArrayList<>();
     }
 
-    public void addTask(String[] args, TaskType type) {
-        switch (type) {
-            case TaskType.TODO:
-                tasks.add(new Todo(args[0]));
-                break;
-            case TaskType.DEADLINE:
-                tasks.add(new Deadline(args[0], args[1]));
-                break;
-            case TaskType.EVENT:
-                tasks.add(new Event(args[0], args[1], args[2]));
-                break;
+    public void addTask(Task task) {
+        if (task == null) {
+            return;
         }
-        System.out.println("added: " + args[0]);
+        tasks.add(task);
+        System.out.println("added: " + task);
     }
 
     public void listTasks() {

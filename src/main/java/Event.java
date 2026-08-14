@@ -2,10 +2,25 @@ public class Event extends Task {
     private String from;
     private String to;
 
-    public Event(String name, String from, String to) {
-        super(name, "E");
-        this.from = from;
-        this.to = to;
+    @Override
+    public Task initialise(String input) {
+        if (input == null) {
+            System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+        } else {
+            String[] arguments = input.split(" /from | /to ");
+            if (arguments.length < 3 || arguments[0] == null ||
+                    arguments[1] == null || arguments[2] == null
+                    || arguments[0].isEmpty() || arguments[1].isEmpty() || arguments[2].isEmpty()) {
+                System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+            } else {
+                this.name = arguments[0];
+                this.from = arguments[1];
+                this.to = arguments[2];
+                this.symbol = "E";
+                return this;
+            }
+        }
+        return null;
     }
 
     @Override

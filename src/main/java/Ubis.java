@@ -113,38 +113,13 @@ public class Ubis {
                 }
                 break;
             case "todo":
-                if (argument == null || argument.isEmpty()) {
-                    System.out.println("Missing task name, please do \"todo task-name\" instead.");
-                } else {
-                    taskList.addTask(new String[] { argument }, TaskList.TaskType.TODO);
-                }
+                taskList.addTask(new Todo().initialise(argument));
                 break;
             case "deadline":
-                if (argument == null) {
-                    System.out.println("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
-                } else {
-                    String[] arguments = argument.split(" /by ");
-                    if (arguments.length < 2 || arguments[0] == null ||
-                            arguments[1] == null || arguments[0].isEmpty() || arguments[1].isEmpty()) {
-                        System.out.println("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
-                    } else {
-                        taskList.addTask(new String[] { arguments[0], arguments[1] }, TaskList.TaskType.DEADLINE);
-                    }
-                }
+                taskList.addTask(new Deadline().initialise(argument));
                 break;
             case "event":
-                if (argument == null) {
-                    System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
-                } else {
-                    String[] arguments = argument.split(" /from | /to ");
-                    if (arguments.length < 3 || arguments[0] == null ||
-                            arguments[1] == null || arguments[2] == null
-                            || arguments[0].isEmpty() || arguments[1].isEmpty() || arguments[2].isEmpty()) {
-                        System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
-                    } else {
-                        taskList.addTask(new String[] { arguments[0], arguments[1], arguments[2] }, TaskList.TaskType.EVENT);
-                    }
-                }
+                taskList.addTask(new Event().initialise(argument));
                 break;
             default:
                 System.out.println("Unknown command. Type \"help\" for commands!");

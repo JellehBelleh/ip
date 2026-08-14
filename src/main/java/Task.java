@@ -1,13 +1,13 @@
 // Class that represents a task
 public abstract class Task {
-    private String name;
-    private boolean done;
-    private String symbol;
+    protected String name;
+    protected boolean done;
+    protected String symbol;
 
-    public Task(String name, String symbol) {
-        this.name = name;
-        this.symbol = symbol;
+    public Task() {
+        this.name = null;
         this.done = false;
+        this.symbol = null;
     }
 
     public void mark() {
@@ -17,6 +17,8 @@ public abstract class Task {
     public void unmark() {
         this.done = false;
     }
+
+    public abstract Task initialise(String input);
 
     @Override
     public String toString() {

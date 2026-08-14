@@ -1,5 +1,13 @@
 public class Todo extends Task{
-    public Todo(String name) {
-        super(name, "T");
+    @Override
+    public Task initialise(String input) {
+        if (input == null || input.isEmpty()) {
+            System.out.println("Missing task name, please do \"todo task-name\" instead.");
+        } else {
+            this.name = input;
+            this.symbol = "T";
+            return this;
+        }
+        return null;
     }
 }
