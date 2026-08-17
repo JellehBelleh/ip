@@ -4,7 +4,6 @@ import java.util.List;
 // Class that can register and track tasks
 public class TaskList {
     private List<Task> tasks;
-    public static enum TaskType { TODO, DEADLINE, EVENT };
 
     public TaskList() {
         this.tasks = new ArrayList<>();

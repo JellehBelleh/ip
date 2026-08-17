@@ -16,7 +16,7 @@ public class Event extends Task {
                 this.name = arguments[0];
                 this.from = arguments[1];
                 this.to = arguments[2];
-                this.symbol = "E";
+                this.symbol = TaskType.EVENT.getSymbol();
                 return this;
             }
         }

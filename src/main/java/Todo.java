@@ -5,7 +5,7 @@ public class Todo extends Task{
             System.out.println("Missing task name, please do \"todo task-name\" instead.");
         } else {
             this.name = input;
-            this.symbol = "T";
+            this.symbol = TaskType.TODO.getSymbol();
             return this;
         }
         return null;
