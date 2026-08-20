@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
  * Class for saving and loading data for Ubis Chatbot
  * Main methods are save and load
  */
-public class Data {
+public class Storage {
     private static final Path savePath = Paths.get("data", "data.txt");
     private static final Path directoryPath = savePath.getParent();
 

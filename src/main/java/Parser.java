@@ -114,7 +114,7 @@ public class Parser {
             default:
                 Ui.printMessage("Unknown command. Type \"help\" for commands!");
         }
-        Data.save(ubis.getTaskList());
+        Storage.save(ubis.getTaskList());
     }
 
     /**

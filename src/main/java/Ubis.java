@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.Scanner;
-
 /**
  * Entry point of Ubis chatbot, containing the overall logic flow
  */
@@ -15,7 +12,7 @@ public class Ubis {
 
     public Ubis() {
         this.parser = new Parser(this);
-        this.taskList = Data.load();
+        this.taskList = Storage.load();
     }
 
     /**
