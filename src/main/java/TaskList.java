@@ -18,18 +18,6 @@ public class TaskList {
         System.out.println("added: " + task);
     }
 
-    public void addTask(String[] strings) {
-        if (strings.length < 3) {
-            System.out.println("Invalid String[]: " + Arrays.toString(strings));
-            return;
-        }
-
-        String symbol = strings[0];
-        boolean done = strings[1].equals("1");
-        String name = strings[2];
-
-    }
-
     public void removeTask(int num) {
         if (num < 1 || num > tasks.size()) {
             System.out.println("Sorry, there is no task number " + num + ". Please try again.");

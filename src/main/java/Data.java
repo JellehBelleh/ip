@@ -36,7 +36,7 @@ public class Data {
 
             for (String line : lines) {
                 String[] segments = line.split("[{}]");
-                tasks.addTask(segments);
+                tasks.addTask(Task.initialise(segments));
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e);
