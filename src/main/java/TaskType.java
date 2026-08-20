@@ -1,3 +1,6 @@
+/**
+ * Enum for the task types, with symbols provided
+ */
 public enum TaskType {
     TODO("T"),
     DEADLINE("D"),

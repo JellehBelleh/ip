@@ -1,6 +1,8 @@
 import java.util.Arrays;
 
-// Class that represents a task
+/**
+ * Abstract class that represents a task
+ */
 public abstract class Task {
     protected String name;
     protected boolean done;
@@ -12,16 +14,32 @@ public abstract class Task {
         this.type = null;
     }
 
+    /**
+     * Marks the task as done
+     */
     public void mark() {
         this.done = true;
     }
 
+    /**
+     * Marks the task as undone
+     */
     public void unmark() {
         this.done = false;
     }
 
+    /**
+     * Initialises the task given the input string. Definition is specific to task type.
+     * @param input string of arguments
+     * @return the initialised task
+     */
     public abstract Task initialise(String input);
 
+    /**
+     * Initialises the task given the arguments as a string array.
+     * @param segments input arguments
+     * @return the initialised task
+     */
     public static Task initialise(String[] segments) {
         if (segments.length < 3) {
             System.out.println("Invalid String[]: " + Arrays.toString(segments));
@@ -65,6 +83,11 @@ public abstract class Task {
         return task;
     }
 
+    /**
+     * Stringify the task into a format for storage. If you want
+     * to display the task, use toString() instead.
+     * @return string of the task to be stored
+     */
     public String stringify() {
         return "{" + this.type.getSymbol()+ "}" + "{" + (this.done ? "1" : "0") + "}" + "{" + this.name + "}";
     }

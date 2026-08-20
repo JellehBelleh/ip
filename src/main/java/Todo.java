@@ -1,4 +1,7 @@
-public class Todo extends Task{
+/**
+ * class to represent a todo task
+ */
+public class Todo extends Task {
     @Override
     public Task initialise(String input) {
         if (input == null || input.isEmpty()) {

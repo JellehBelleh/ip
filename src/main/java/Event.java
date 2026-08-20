@@ -1,3 +1,6 @@
+/**
+ * Class to represent an event task
+ */
 public class Event extends Task {
     private String from;
     private String to;

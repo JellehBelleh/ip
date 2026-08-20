@@ -2,7 +2,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// Class that can register and track tasks
+/**
+ * Class that manages a list of tasks
+ */
 public class TaskList {
     private List<Task> tasks;
 
@@ -10,14 +12,34 @@ public class TaskList {
         this.tasks = new ArrayList<>();
     }
 
+    /**
+     * Add a task to the task list. Will print outcome by default.
+     * Use addTask(task, false) to add task silently
+     * @param task task to be added
+     */
     public void addTask(Task task) {
+        addTask(task, true);
+    }
+
+    /**
+     * Add the given task to the task list.
+     * @param task task to be added
+     * @param print whether to print outcome of operation
+     */
+    public void addTask(Task task, boolean print) {
         if (task == null) {
             return;
         }
         tasks.add(task);
-        System.out.println("added: " + task);
+        if (print) {
+            System.out.println("added: " + task);
+        }
     }
 
+    /**
+     * Removes task from the list
+     * @param num Index of task to remove. Note that this input is 1-indexed.
+     */
     public void removeTask(int num) {
         if (num < 1 || num > tasks.size()) {
             System.out.println("Sorry, there is no task number " + num + ". Please try again.");
@@ -30,12 +52,19 @@ public class TaskList {
         System.out.println("Okay, I've deleted " + taskDescription);
     }
 
+    /**
+     * Prints all tasks in the list. No side effects.
+     */
     public void listTasks() {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println((i + 1) + ": " + tasks.get(i));
         }
     }
 
+    /**
+     * marks a task as done in the list, using the index
+     * @param index index of task (1-indexed)
+     */
     public void markTask(int index) {
         if (index < 1 || index > tasks.size()) {
             System.out.println("Sorry, there is no task number " + index + ". Please try again.");

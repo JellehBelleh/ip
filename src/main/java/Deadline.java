@@ -1,3 +1,6 @@
+/**
+ * Class to represent a deadline task
+ */
 public class Deadline extends Task {
     private String deadline;
 

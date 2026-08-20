@@ -6,10 +6,18 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class for saving and loading data for Ubis Chatbot
+ * Main methods are save and load
+ */
 public class Data {
     private static final Path savePath = Paths.get("data", "data.txt");
     private static final Path directoryPath = savePath.getParent();
 
+    /**
+     * Saves the tasklist into local file storage. Can be retrived via load()
+     * @param taskList task list to be saved
+     */
     public static void save(TaskList taskList) {
         if (!verifyAndCreatePath()) {
             System.out.println("Failed to verify or create path. Aborting save.");
@@ -24,6 +32,10 @@ public class Data {
         }
     }
 
+    /**
+     * Returns task list from local storage. Returns empty task list if unable to
+     * @return task list from storage
+     */
     public static TaskList load() {
         TaskList tasks = new TaskList();
 
@@ -51,6 +63,11 @@ public class Data {
         return tasks;
     }
 
+    /**
+     * Checks if the directory and path to the save file exists, and tries to create
+     * it if missing. If unable, will print the error and abort.
+     * @return true if successful, false otherwise
+     */
     private static boolean verifyAndCreatePath() {
         // First check if directory "./data" exists, try to create it if not.
         if (!Files.exists(directoryPath)){
