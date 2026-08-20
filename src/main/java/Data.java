@@ -53,7 +53,7 @@ public class Data {
                         .filter(s -> !s.isEmpty())
                         .toArray(String[]::new);
 
-                tasks.addTask(Task.initialise(segments));
+                tasks.addTask(Task.initialise(segments), false);
             }
         } catch (IOException e) {
             System.out.println("Error reading file: " + e);
