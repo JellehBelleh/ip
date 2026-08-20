@@ -9,7 +9,7 @@ public class Ubis {
     private static TaskList taskList = new TaskList();
 
     // Items not allowed in user input as they can affect parsing
-    private static final String[] ILLEGAL_ARTIFACTS = {
+    public static final String[] ILLEGAL_ARTIFACTS = {
             "{", "}"
     };
 
@@ -23,17 +23,7 @@ public class Ubis {
      * user input repeatedly until exit() is called.
      */
     private static void welcome() {
-        String banner = " _   _ ____ ___ ____  \n"
-                + "| | | | __ )|_ _/ ___| \n"
-                + "| | | |  _ \\ | |\\___ \\ \n"
-                + "| |_| | |_) || | ___) |\n"
-                + " \\___/|____/|___|____/ \n";
-
-        printDashLine();
-        System.out.println(banner);
-        System.out.println("Hello! I am Ubis.");
-        System.out.println("What can I do for you?");
-        printDashLine();
+        Ui.welcome();
 
         taskList = Data.load();
 
@@ -43,20 +33,14 @@ public class Ubis {
         }
     }
 
-    /**
-     * Prints a line of length 30 on the console
-     */
-    private static void printDashLine() {
-        System.out.println("_".repeat(30));
-    }
+
 
     /**
      * Cleans up resources and terminates the Chatbot program,
      * printing a goodbye message as well.
      */
     private static void exit() {
-        System.out.println("Goodbye. See you soon!");
-        printDashLine();
+        Ui.printMessage(Ui.Message.GOODBYE);
         SCANNER.close();
         System.exit(0);
     }
@@ -68,7 +52,7 @@ public class Ubis {
      */
     private static String receiveInput() {
         String command = SCANNER.nextLine();
-        printDashLine();
+        Ui.printDashLine();
         return command;
     }
 
@@ -94,16 +78,12 @@ public class Ubis {
      */
     private static void handleInput(String input) {
         if (input.isEmpty()) {
-            System.out.println("Hi! You can type in a task name and I will keep track of it for you!");
-            System.out.println("type \"help\" for information on commands.");
-
+            Ui.printMessage(Ui.Message.EMPTY_INPUT);
             return;
         }
 
         if (containsIllegalArtifact(input)) {
-            System.out.println("Sorry! Please make sure your input does not contain any of the following" +
-                    " characters: ");
-            System.out.println(Arrays.toString(ILLEGAL_ARTIFACTS));
+            Ui.printMessage(Ui.Message.ILLEGAL_INPUT);
             return;
         }
 
@@ -126,52 +106,44 @@ public class Ubis {
                 taskList.listTasks();
                 break;
             case "help":
-                System.out.println("Here are some commands: ");
-                System.out.println("  list - list all tasks");
-                System.out.println("  mark n - mark the nth task as done");
-                System.out.println("  unmark n - mark the nth task as NOT done");
-                System.out.println("  todo task-name - add a task");
-                System.out.println("  deadline task-name /by task-deadline - add a deadline");
-                System.out.println("  event task-name /from start /to end - add an event");
-                System.out.println("  delete n - delete the nth task");
-                System.out.println("  bye - exit the program");
+                Ui.printMessage(Ui.Message.HELP);
                 break;
             case "mark":
                 if (argument == null) {
-                    System.out.println("Please add the task number you want to mark!");
-                    System.out.println("Example: \"mark 4\" if you want to mark the fourth task.");
+                    Ui.printMessage("Please add the task number you want to mark!\n"
+                    + "Example: \"mark 4\" if you want to mark the fourth task.");
                 } else {
                     try {
                         taskList.markTask(Integer.parseInt(argument));
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid task number of: " + argument);
-                        System.out.println("Please try again!");
+                        Ui.printMessage("Invalid task number of: " + argument
+                        + "\nPlease try again!");
                     }
                 }
                 break;
             case "unmark":
                 if (argument == null) {
-                    System.out.println("Please add the task number you want to unmark!");
-                    System.out.println("Example: \"unmark 4\" if you want to unmark the fourth task.");
+                    Ui.printMessage("Please add the task number you want to unmark!"
+                    + "\nExample: \"unmark 4\" if you want to unmark the fourth task.");
                 } else {
                     try {
                         taskList.unmarkTask(Integer.parseInt(argument));
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid task number of: " + argument);
-                        System.out.println("Please try again!");
+                        Ui.printMessage("Invalid task number of: " + argument
+                        + "\nPlease try again!");
                     }
                 }
                 break;
             case "delete":
                 if (argument == null) {
-                    System.out.println("Please add the task number you want to delete!");
-                    System.out.println("Example: \"delete 4\" if you want to delete the fourth task.");
+                    Ui.printMessage("Please add the task number you want to delete!"
+                    + "\nExample: \"delete 4\" if you want to delete the fourth task.");
                 } else {
                     try {
                         taskList.removeTask(Integer.parseInt(argument));
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid task number of: " + argument);
-                        System.out.println("Please try again!");
+                        Ui.printMessage("Invalid task number of: " + argument
+                        + "\nPlease try again!");
                     }
                 }
                 break;
@@ -185,9 +157,8 @@ public class Ubis {
                 taskList.addTask(new Event().initialise(argument));
                 break;
             default:
-                System.out.println("Unknown command. Type \"help\" for commands!");
+                Ui.printMessage("Unknown command. Type \"help\" for commands!");
         }
         Data.save(taskList);
-        printDashLine();
     }
 }
