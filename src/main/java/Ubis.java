@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -6,6 +7,11 @@ import java.util.Scanner;
 public class Ubis {
     private static final Scanner SCANNER = new Scanner(System.in);
     private static TaskList taskList = new TaskList();
+
+    // Items not allowed in user input as they can affect parsing
+    private static final String[] ILLEGAL_ARTIFACTS = {
+            "{", "}"
+    };
 
     public static void main(String[] args) {
         welcome();
@@ -67,6 +73,22 @@ public class Ubis {
     }
 
     /**
+     * Helps to check if the given input has illegal artifacts
+     * that could affect parsing of data
+     * @param input to be checked
+     * @return true if it contains illegal artifacts, false otherwise
+     */
+    private static boolean containsIllegalArtifact(String input) {
+        for (String illegal : ILLEGAL_ARTIFACTS) {
+            if (input.contains(illegal)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Handles incoming user input, performing the appropriate tasks
      * @param input string input from the user
      */
@@ -75,6 +97,13 @@ public class Ubis {
             System.out.println("Hi! You can type in a task name and I will keep track of it for you!");
             System.out.println("type \"help\" for information on commands.");
 
+            return;
+        }
+
+        if (containsIllegalArtifact(input)) {
+            System.out.println("Sorry! Please make sure your input does not contain any of the following" +
+                    " characters: ");
+            System.out.println(Arrays.toString(ILLEGAL_ARTIFACTS));
             return;
         }
 
