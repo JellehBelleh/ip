@@ -1,3 +1,6 @@
+/**
+ * Class to represent a deadline task
+ */
 public class Deadline extends Task {
     private String deadline;
 
@@ -13,7 +16,7 @@ public class Deadline extends Task {
             } else {
                 this.name = arguments[0];
                 this.deadline = arguments[1];
-                this.symbol = TaskType.DEADLINE.getSymbol();
+                this.type = TaskType.DEADLINE;
                 return this;
             }
         }
@@ -23,5 +26,10 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return super.toString() + " (by: " + deadline + ")";
+    }
+
+    @Override
+    public String stringify() {
+        return super.stringify() + "{" + deadline + "}";
     }
 }

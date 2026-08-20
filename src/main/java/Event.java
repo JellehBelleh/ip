@@ -1,3 +1,6 @@
+/**
+ * Class to represent an event task
+ */
 public class Event extends Task {
     private String from;
     private String to;
@@ -16,7 +19,7 @@ public class Event extends Task {
                 this.name = arguments[0];
                 this.from = arguments[1];
                 this.to = arguments[2];
-                this.symbol = TaskType.EVENT.getSymbol();
+                this.type = TaskType.EVENT;
                 return this;
             }
         }
@@ -26,5 +29,10 @@ public class Event extends Task {
     @Override
     public String toString() {
         return super.toString() + " (from: " + from + " to: " + to + ")";
+    }
+
+    @Override
+    public String stringify() {
+        return super.stringify() + "{" + from + "}" + "{" + to + "}";
     }
 }
