@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 // Class that can register and track tasks
@@ -15,6 +16,18 @@ public class TaskList {
         }
         tasks.add(task);
         System.out.println("added: " + task);
+    }
+
+    public void addTask(String[] strings) {
+        if (strings.length < 3) {
+            System.out.println("Invalid String[]: " + Arrays.toString(strings));
+            return;
+        }
+
+        String symbol = strings[0];
+        boolean done = strings[1].equals("1");
+        String name = strings[2];
+
     }
 
     public void removeTask(int num) {
@@ -57,5 +70,16 @@ public class TaskList {
         task.unmark();
         System.out.println("Okay, I've marked this task NOT done yet:");
         System.out.println("  " + task);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+
+        for (Task t : tasks) {
+            result.append(t.stringify()).append("\n");
+        }
+
+        return result.toString();
     }
 }

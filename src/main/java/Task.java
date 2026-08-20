@@ -20,6 +20,10 @@ public abstract class Task {
 
     public abstract Task initialise(String input);
 
+    public String stringify() {
+        return "{" + this.symbol + "}" + "{" + (this.done ? "1" : "0") + "}" + "{" + this.name + "}";
+    }
+
     @Override
     public String toString() {
         return "[" + symbol + "]" + "[" + (this.done ? "X" : " ") + "] " + this.name;
