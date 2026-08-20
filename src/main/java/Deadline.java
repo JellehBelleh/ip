@@ -1,8 +1,13 @@
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * Class to represent a deadline task
  */
 public class Deadline extends Task {
-    private String deadline;
+    private LocalDate deadline;
 
     @Override
     public Task initialise(String input) {
@@ -12,10 +17,15 @@ public class Deadline extends Task {
             String[] arguments = input.split(" /by ");
             if (arguments.length < 2 || arguments[0] == null ||
                     arguments[1] == null || arguments[0].isEmpty() || arguments[1].isEmpty()) {
-                System.out.println("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
+                System.out.println("Missing arguments, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
             } else {
                 this.name = arguments[0];
-                this.deadline = arguments[1];
+                try {
+                    this.deadline = LocalDate.parse(arguments[1]);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid deadline format, please do \"deadline task-name /by YYYY-MM-DD\" instead. " );
+                    return null;
+                }
                 this.type = TaskType.DEADLINE;
                 return this;
             }
@@ -25,7 +35,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + deadline + ")";
+        return super.toString() + " (by: " + deadline.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
     }
 
     @Override

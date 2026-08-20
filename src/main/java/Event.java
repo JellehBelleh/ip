@@ -1,9 +1,13 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * Class to represent an event task
  */
 public class Event extends Task {
-    private String from;
-    private String to;
+    private LocalDate from;
+    private LocalDate to;
 
     @Override
     public Task initialise(String input) {
@@ -17,8 +21,13 @@ public class Event extends Task {
                 System.out.println("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
             } else {
                 this.name = arguments[0];
-                this.from = arguments[1];
-                this.to = arguments[2];
+                try {
+                    this.from = LocalDate.parse(arguments[1]);
+                    this.to = LocalDate.parse(arguments[2]);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid event format, please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+                    return null;
+                }
                 this.type = TaskType.EVENT;
                 return this;
             }
@@ -28,7 +37,8 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (from: " + from + " to: " + to + ")";
+        return super.toString() + " (from: " + from.format(DateTimeFormatter.ofPattern("MMM d yyyy"))
+                + " to: " + to.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
     }
 
     @Override
