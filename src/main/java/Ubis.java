@@ -8,7 +8,11 @@ public class Ubis {
         welcome();
     }
 
-    // Welcomes the user with print messages, then awaits commands
+    /**
+     * Entry point of the chatbot program.
+     * Prints welcome banner and message, then handles
+     * user input repeatedly until exit() is called.
+     */
     private static void welcome() {
         String banner = " _   _ ____ ___ ____  \n"
                 + "| | | | __ )|_ _/ ___| \n"
@@ -28,13 +32,17 @@ public class Ubis {
         }
     }
 
+    /**
+     * Prints a line of length 30 on the console
+     */
     private static void printDashLine() {
         System.out.println("_".repeat(30));
     }
 
-    // Handle exit of the bot.
-    // 1. Prints goodbye
-    // 2. Cleans up resources
+    /**
+     * Cleans up resources and terminates the Chatbot program,
+     * printing a goodbye message as well.
+     */
     private static void exit() {
         System.out.println("Goodbye. See you soon!");
         printDashLine();
@@ -42,14 +50,21 @@ public class Ubis {
         System.exit(0);
     }
 
-    // Method to get a line of input from the user.
+    /**
+     * Waits for user input and returns it in a String. Prints
+     * a dashed line after for separation
+     * @return a string containing the user's input
+     */
     private static String receiveInput() {
         String command = SCANNER.nextLine();
         printDashLine();
         return command;
     }
 
-    // Handles the incoming input
+    /**
+     * Handles incoming user input, performing the appropriate tasks
+     * @param input string input from the user
+     */
     private static void handleInput(String input) {
         if (input.isEmpty()) {
             System.out.println("Hi! You can type in a task name and I will keep track of it for you!");
