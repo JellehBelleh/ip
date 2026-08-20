@@ -2,7 +2,7 @@ import java.util.Scanner;
 
 public class Ubis {
     private static final Scanner SCANNER = new Scanner(System.in);
-    private static final TaskList taskList = new TaskList();
+    private static TaskList taskList = new TaskList();
 
     public static void main(String[] args) {
         welcome();
@@ -25,6 +25,8 @@ public class Ubis {
         System.out.println("Hello! I am Ubis.");
         System.out.println("What can I do for you?");
         printDashLine();
+
+        taskList = Data.load();
 
         // Keep handling commands. Exits when user inputs "bye"
         while (true) {
@@ -153,6 +155,7 @@ public class Ubis {
             default:
                 System.out.println("Unknown command. Type \"help\" for commands!");
         }
+        Data.save(taskList);
         printDashLine();
     }
 }

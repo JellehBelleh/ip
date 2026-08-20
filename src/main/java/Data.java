@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class Data {
@@ -36,6 +37,10 @@ public class Data {
 
             for (String line : lines) {
                 String[] segments = line.split("[{}]");
+                segments = Arrays.stream(segments)
+                        .filter(s -> !s.isEmpty())
+                        .toArray(String[]::new);
+
                 tasks.addTask(Task.initialise(segments));
             }
         } catch (IOException e) {
