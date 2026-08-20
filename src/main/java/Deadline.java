@@ -13,7 +13,7 @@ public class Deadline extends Task {
             } else {
                 this.name = arguments[0];
                 this.deadline = arguments[1];
-                this.symbol = TaskType.DEADLINE.getSymbol();
+                this.type = TaskType.DEADLINE;
                 return this;
             }
         }

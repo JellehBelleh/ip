@@ -2,12 +2,12 @@
 public abstract class Task {
     protected String name;
     protected boolean done;
-    protected String symbol;
+    protected TaskType type;
 
     public Task() {
         this.name = null;
         this.done = false;
-        this.symbol = null;
+        this.type = null;
     }
 
     public void mark() {
@@ -21,11 +21,11 @@ public abstract class Task {
     public abstract Task initialise(String input);
 
     public String stringify() {
-        return "{" + this.symbol + "}" + "{" + (this.done ? "1" : "0") + "}" + "{" + this.name + "}";
+        return "{" + this.type.getSymbol()+ "}" + "{" + (this.done ? "1" : "0") + "}" + "{" + this.name + "}";
     }
 
     @Override
     public String toString() {
-        return "[" + symbol + "]" + "[" + (this.done ? "X" : " ") + "] " + this.name;
+        return "[" + this.type.getSymbol() + "]" + "[" + (this.done ? "X" : " ") + "] " + this.name;
     }
 }
