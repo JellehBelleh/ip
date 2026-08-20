@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Class for saving and loading data for ubis.Ubis Chatbot
+ * Class for saving and loading data for ubis. Ubis Chatbot
  * Main methods are save and load
  */
 public class Storage {
