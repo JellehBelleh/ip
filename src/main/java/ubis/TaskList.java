@@ -79,6 +79,10 @@ public class TaskList {
         System.out.println("  " + task);
     }
 
+    /**
+     * unmarks a task (makes it undone), using the index
+     * @param index index of task (1-indexed)
+     */
     public void unmarkTask(int index) {
         if (index < 1 || index > tasks.size()) {
             System.out.println("Sorry, there is no task number " + index + ". Please try again.");
