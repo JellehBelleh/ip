@@ -1,3 +1,5 @@
+package ubis;
+
 /**
  * Enum for the task types, with symbols provided
  */

@@ -1,3 +1,5 @@
+package ubis;
+
 import java.util.Arrays;
 
 /**
@@ -43,7 +45,7 @@ public class Ui {
 
         printDashLine();
         System.out.println(banner);
-        System.out.println("Hello! I am Ubis.");
+        System.out.println("Hello! I am ubis.Ubis.");
         System.out.println("What can I do for you?");
         printDashLine();
     }

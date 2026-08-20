@@ -1,3 +1,5 @@
+package ubis;
+
 import java.util.Scanner;
 
 /**

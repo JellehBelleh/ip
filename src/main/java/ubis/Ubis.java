@@ -1,5 +1,7 @@
+package ubis;
+
 /**
- * Entry point of Ubis chatbot, containing the overall logic flow
+ * Entry point of ubis.Ubis chatbot, containing the overall logic flow
  */
 public class Ubis {
     private TaskList taskList = new TaskList();
@@ -30,7 +32,7 @@ public class Ubis {
     }
 
     /**
-     * Return this Ubis's task list
+     * Return this ubis.Ubis's task list
      * @return task list
      */
     public TaskList getTaskList() {

@@ -19,7 +19,7 @@ Describe the behavior being checked.
 
 ### Command
 ```sh
-java -cp build/classes/java/main Ubis
+java -cp build/classes/java/main ubis.Ubis
 ```
 
 ### Input

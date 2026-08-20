@@ -3,11 +3,11 @@
 ## Test Case: Initial greeting and exit
 
 ### Aim
-Verify that Ubis displays its banner and greeting, then exits with a farewell message when the user enters `bye`.
+Verify that ubis.Ubis displays its banner and greeting, then exits with a farewell message when the user enters `bye`.
 
 ### Command
 ```sh
-javac -d /private/tmp/ubis-ui-test src/main/java/*.java && java -cp /private/tmp/ubis-ui-test Ubis
+javac -d /private/tmp/ubis-ui-test src/main/java/*.java && java -cp /private/tmp/ubis-ui-test ubis.Ubis
 ```
 
 ### Input
@@ -24,7 +24,7 @@ ______________________________
 | |_| | |_) || | ___) |
  \___/|____/|___|____/ 
 
-Hello! I am Ubis.
+Hello! I am ubis.Ubis.
 What can I do for you?
 ______________________________
 ______________________________
