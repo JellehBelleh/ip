@@ -57,8 +57,19 @@ public class TaskList {
      * Prints all tasks in the list. No side effects.
      */
     public void listTasks() {
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + ": " + tasks.get(i));
+        listTasks(tasks);
+    }
+
+    /**
+     * Prints all tasks in the list
+     * @param list Task list to be printed
+     */
+    private void listTasks(List<Task> list) {
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println((i + 1) + ": " + list.get(i));
+        }
+        if (list.isEmpty()) {
+            System.out.println("No tasks to show");
         }
         Ui.printDashLine();
     }
@@ -93,6 +104,26 @@ public class TaskList {
         task.unmark();
         System.out.println("Okay, I've marked this task NOT done yet:");
         System.out.println("  " + task);
+    }
+
+    /**
+     * Lists all tasks that contain the input parameter string
+     * @param parameter string to search for
+     */
+    public void find(String parameter) {
+        if (parameter == null || parameter.isEmpty()) {
+            Ui.printMessage("Missing parameter for \"find\", do \"find name\" instead.");
+            return;
+        }
+
+        List<Task> list = new ArrayList<>();
+        for (Task t : tasks) {
+            if (t.getName().contains(parameter)) {
+                list.add(t);
+            }
+        }
+
+        listTasks(list);
     }
 
     @Override

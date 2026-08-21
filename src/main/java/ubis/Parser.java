@@ -113,8 +113,11 @@ public class Parser {
             case "event":
                 ubis.getTaskList().addTask(new Event().initialise(argument));
                 break;
+            case "find":
+                ubis.getTaskList().find(argument);
+                break;
             default:
-                Ui.printMessage("Unknown command. Type \"help\" for commands!");
+                Ui.printMessage("Unknown command" + "\"" + command + "\"" + ". Type \"help\" for commands!");
         }
         Storage.save(ubis.getTaskList());
     }
