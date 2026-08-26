@@ -3,24 +3,29 @@ package ubis;
 import java.util.Arrays;
 
 /**
- * Class to handle UI of the chatbot
+ * Handles interactions with the user by displaying messages and banners to the console.
  */
 public class Ui {
+    private static final int LINE_LENGTH = 30;
+
+    /**
+     * Predefined system messages displayed to the user.
+     */
     public enum Message {
         GOODBYE("Goodbye. See you soon!"),
-        EMPTY_INPUT("Hi! You can type in a task name and I will keep track of it for you!\n" +
-                            "type \"help\" for information on commands."),
+        EMPTY_INPUT("Hi! You can type in a task name and I will keep track of it for you!\n"
+                + "type \"help\" for information on commands."),
         ILLEGAL_INPUT("Sorry! Please ensure input does not contain any of the following characters: \n"
                 + Arrays.toString(Parser.ILLEGAL_ARTIFACTS)),
-        HELP("Here are some commands:\n" +
-                "   list - list all tasks\n" +
-                "   mark n - mark the nth task as done\n" +
-                "   unmark n - mark the nth task as NOT done\n" +
-                "   todo task-name - add a task\n" +
-                "   deadline task-name /by task-deadline - add a deadline\n" +
-                "   event task-name /from start /to end - add an event\n" +
-                "   delete n - delete the nth task\n" +
-                "   bye - exit the program");
+        HELP("Here are some commands:\n"
+                + "   list - list all tasks\n"
+                + "   mark n - mark the nth task as done\n"
+                + "   unmark n - mark the nth task as NOT done\n"
+                + "   todo task-name - add a task\n"
+                + "   deadline task-name /by task-deadline - add a deadline\n"
+                + "   event task-name /from start /to end - add an event\n"
+                + "   delete n - delete the nth task\n"
+                + "   bye - exit the program");
 
         private final String message;
 
@@ -34,7 +39,7 @@ public class Ui {
     }
 
     /**
-     * Prints welcome message for the user
+     * Prints the welcome banner and introductory message to the console.
      */
     public static void welcome() {
         String banner = " _   _ ____ ___ ____  \n"
@@ -45,33 +50,36 @@ public class Ui {
 
         printDashLine();
         System.out.println(banner);
-        System.out.println("Hello! I am ubis.Ubis.");
+        System.out.println("Hello! I am Ubis.");
         System.out.println("What can I do for you?");
         printDashLine();
     }
 
     /**
-     * Prints a line of length 30 on the console
+     * Prints a divider line of dashes to the console.
      */
     public static void printDashLine() {
-        System.out.println("_".repeat(30));
+        System.out.println("_".repeat(LINE_LENGTH));
     }
 
     /**
-     * Prints a message set by the Message object
-     * @param msg Message object you want to display
+     * Prints a predefined message followed by a divider line.
+     *
+     * @param message Predefined Message enum value to display.
      */
-    public static void printMessage(Message msg) {
-        System.out.println(msg.getMessage());
+    public static void printMessage(Message message) {
+        System.out.println(message.getMessage());
         printDashLine();
     }
 
     /**
-     * Prints a string as a message
-     * @param msg string to be printed
+     * Prints a string message followed by a divider line.
+     *
+     * @param message Text message to be printed.
      */
-    public static void printMessage(String msg) {
-        System.out.println(msg);
+    public static void printMessage(String message) {
+        System.out.println(message);
         printDashLine();
     }
 }
+

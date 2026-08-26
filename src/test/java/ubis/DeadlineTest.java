@@ -1,18 +1,28 @@
 package ubis;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Tests the creation, validation, and serialization of Deadline tasks.
+ */
 public class DeadlineTest {
+
     @Test
-    public void deadlineDateTest() {
+    public void initialise_invalidDateFormat_returnsNull() {
         assertNull(new Deadline().initialise("submit report /by 2026-13-01"));
+    }
+
+    @Test
+    public void initialise_validDate_returnsDeadline() {
         assertNotEquals(null, new Deadline().initialise("submit report /by 2026-09-01"));
     }
 
     @Test
-    public void stringifyTest() {
+    public void stringify_unmarkedAndMarkedDeadline_returnsCorrectStorageString() {
         assertEquals("{D}{0}{submit report}{2026-09-01}",
                 new Deadline().initialise("submit report /by 2026-09-01").stringify());
 

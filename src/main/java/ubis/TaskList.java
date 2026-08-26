@@ -4,136 +4,146 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class that manages a list of tasks
+ * Manages an in-memory list of tasks and supports operations such as adding, deleting, marking, and finding tasks.
  */
 public class TaskList {
     private List<Task> tasks;
 
+    /**
+     * Constructs an empty TaskList.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
     /**
-     * Add a task to the task list. Will print outcome by default.
-     * Use addTask(task, false) to add task silently
-     * @param task task to be added
+     * Adds a task to the task list and prints a confirmation message.
+     *
+     * @param task Task to be added.
      */
     public void addTask(Task task) {
         addTask(task, true);
     }
 
     /**
-     * Add the given task to the task list.
-     * @param task task to be added
-     * @param print whether to print outcome of operation
+     * Adds the given task to the task list with an option to suppress console output.
+     *
+     * @param task Task to be added.
+     * @param shouldPrint Whether to print the outcome of the operation.
      */
-    public void addTask(Task task, boolean print) {
+    public void addTask(Task task, boolean shouldPrint) {
         if (task == null) {
             return;
         }
         tasks.add(task);
-        if (print) {
+        if (shouldPrint) {
             System.out.println("added: " + task);
         }
     }
 
     /**
-     * Removes task from the list
-     * @param num Index of task to remove. Note that this input is 1-indexed.
+     * Removes a task from the list using its 1-based number.
+     *
+     * @param taskNumber 1-based number of the task to remove.
      */
-    public void removeTask(int num) {
-        if (num < 1 || num > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + num + ". Please try again.");
+    public void removeTask(int taskNumber) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
             return;
         }
 
-        int index = num - 1;
+        int index = taskNumber - 1;
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);
         System.out.println("Okay, I've deleted " + taskDescription);
     }
 
     /**
-     * Prints all tasks in the list. No side effects.
+     * Prints all tasks currently stored in the list.
      */
     public void listTasks() {
         listTasks(tasks);
     }
 
     /**
-     * Prints all tasks in the list
-     * @param list Task list to be printed
+     * Prints all tasks in the provided list.
+     *
+     * @param tasksToDisplay List of tasks to be printed.
      */
-    private void listTasks(List<Task> list) {
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println((i + 1) + ": " + list.get(i));
+    private void listTasks(List<Task> tasksToDisplay) {
+        for (int i = 0; i < tasksToDisplay.size(); i++) {
+            System.out.println((i + 1) + ": " + tasksToDisplay.get(i));
         }
-        if (list.isEmpty()) {
+        if (tasksToDisplay.isEmpty()) {
             System.out.println("No tasks to show");
         }
         Ui.printDashLine();
     }
 
     /**
-     * marks a task as done in the list, using the index
-     * @param index index of task (1-indexed)
+     * Marks a task as done in the list using its 1-based number.
+     *
+     * @param taskNumber 1-based number of the task to mark.
      */
-    public void markTask(int index) {
-        if (index < 1 || index > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + index + ". Please try again.");
+    public void markTask(int taskNumber) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
             return;
         }
 
-        Task task = tasks.get(index - 1);
+        Task task = tasks.get(taskNumber - 1);
         task.mark();
         System.out.println("Nice! I've marked this task as DONE:");
         System.out.println("  " + task);
     }
 
     /**
-     * unmarks a task (makes it undone), using the index
-     * @param index index of task (1-indexed)
+     * Marks a task as undone in the list using its 1-based number.
+     *
+     * @param taskNumber 1-based number of the task to unmark.
      */
-    public void unmarkTask(int index) {
-        if (index < 1 || index > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + index + ". Please try again.");
+    public void unmarkTask(int taskNumber) {
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
             return;
         }
 
-        Task task = tasks.get(index - 1);
+        Task task = tasks.get(taskNumber - 1);
         task.unmark();
         System.out.println("Okay, I've marked this task NOT done yet:");
         System.out.println("  " + task);
     }
 
     /**
-     * Lists all tasks that contain the input parameter string
-     * @param parameter string to search for
+     * Finds and lists all tasks whose names contain the given keyword.
+     *
+     * @param keyword String keyword to search for in task names.
      */
-    public void find(String parameter) {
-        if (parameter == null || parameter.isEmpty()) {
+    public void find(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
             Ui.printMessage("Missing parameter for \"find\", do \"find name\" instead.");
             return;
         }
 
-        List<Task> list = new ArrayList<>();
-        for (Task t : tasks) {
-            if (t.getName().contains(parameter)) {
-                list.add(t);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getName().contains(keyword)) {
+                matchingTasks.add(task);
             }
         }
 
-        listTasks(list);
+        listTasks(matchingTasks);
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (Task t : tasks) {
-            result.append(t.stringify()).append("\n");
+        for (Task task : tasks) {
+            result.append(task.stringify()).append("\n");
         }
 
         return result.toString();
     }
 }
+

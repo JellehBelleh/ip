@@ -5,21 +5,33 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Class to represent an event task
+ * Represents an event task with a start date and an end date.
  */
 public class Event extends Task {
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
+
     private LocalDate from;
     private LocalDate to;
 
+    /**
+     * Initialises the event task from user input containing description, start date, and end date.
+     *
+     * @param input Input string containing description, "/from &lt;start&gt;", and "/to &lt;end&gt;".
+     * @return Initialised Event task, or null if arguments/dates are invalid.
+     */
     @Override
     public Task initialise(String input) {
         if (input == null) {
             Ui.printMessage("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
         } else {
             String[] arguments = input.split(" /from | /to ");
-            if (arguments.length < 3 || arguments[0] == null ||
-                    arguments[1] == null || arguments[2] == null
-                    || arguments[0].isEmpty() || arguments[1].isEmpty() || arguments[2].isEmpty()) {
+            if (arguments.length < 3
+                    || arguments[0] == null
+                    || arguments[1] == null
+                    || arguments[2] == null
+                    || arguments[0].isEmpty()
+                    || arguments[1].isEmpty()
+                    || arguments[2].isEmpty()) {
                 Ui.printMessage("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
             } else {
                 this.name = arguments[0];
@@ -39,8 +51,8 @@ public class Event extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (from: " + from.format(DateTimeFormatter.ofPattern("MMM d yyyy"))
-                + " to: " + to.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
+        return super.toString() + " (from: " + from.format(OUTPUT_FORMATTER)
+                + " to: " + to.format(OUTPUT_FORMATTER) + ")";
     }
 
     @Override
@@ -48,3 +60,4 @@ public class Event extends Task {
         return super.stringify() + "{" + from + "}" + "{" + to + "}";
     }
 }
+

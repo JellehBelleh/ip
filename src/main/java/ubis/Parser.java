@@ -3,7 +3,7 @@ package ubis;
 import java.util.Scanner;
 
 /**
- * Class to parse input from user
+ * Parses user input from the console and dispatches the corresponding commands.
  */
 public class Parser {
     public static final String[] ILLEGAL_ARTIFACTS = {
@@ -13,15 +13,20 @@ public class Parser {
     private final Scanner scanner;
     private final Ubis ubis;
 
+    /**
+     * Constructs a Parser associated with the given Ubis chatbot instance.
+     *
+     * @param ubis Chatbot instance to control.
+     */
     public Parser(Ubis ubis) {
         this.ubis = ubis;
-        scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in);
     }
 
     /**
-     * Waits for user input and returns it in a String. Prints
-     * a dashed line after for separation
-     * @return a string containing the user's input
+     * Reads the next line of input from the user and prints a divider line.
+     *
+     * @return User input command string.
      */
     public String receiveInput() {
         String command = scanner.nextLine();
@@ -30,8 +35,9 @@ public class Parser {
     }
 
     /**
-     * Parses string as user input, handles the logic
-     * @param input string input from user
+     * Parses the user's input line and executes the requested command.
+     *
+     * @param input Raw input string entered by the user.
      */
     public void handleInput(String input) {
         if (input.isEmpty()) {
@@ -117,16 +123,16 @@ public class Parser {
                 ubis.getTaskList().find(argument);
                 break;
             default:
-                Ui.printMessage("Unknown command" + "\"" + command + "\"" + ". Type \"help\" for commands!");
+                Ui.printMessage("Unknown command \"" + command + "\". Type \"help\" for commands!");
         }
         Storage.save(ubis.getTaskList());
     }
 
     /**
-     * Helps to check if the given input has illegal artifacts
-     * that could affect parsing of data
-     * @param input to be checked
-     * @return true if it contains illegal artifacts, false otherwise
+     * Checks if the input string contains characters reserved for data storage.
+     *
+     * @param input String to be checked.
+     * @return True if it contains illegal characters, false otherwise.
      */
     private static boolean containsIllegalArtifact(String input) {
         for (String illegal : ILLEGAL_ARTIFACTS) {
@@ -139,9 +145,10 @@ public class Parser {
     }
 
     /**
-     * Cleanup resources. Only to be called when exiting
+     * Closes underlying scanner resources upon application exit.
      */
     public void cleanup() {
         scanner.close();
     }
 }
+

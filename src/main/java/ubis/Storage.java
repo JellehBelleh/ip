@@ -8,16 +8,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Class for saving and loading data for ubis. Ubis Chatbot
- * Main methods are save and load
+ * Handles saving and loading task data to and from the local storage file.
  */
 public class Storage {
-    private static final Path savePath = Paths.get("data", "data.txt");
-    private static final Path directoryPath = savePath.getParent();
+    private static final Path SAVE_PATH = Paths.get("data", "data.txt");
+    private static final Path DIRECTORY_PATH = SAVE_PATH.getParent();
 
     /**
-     * Saves the tasklist into local file storage. Can be retrived via load()
-     * @param taskList task list to be saved
+     * Saves the task list into local file storage.
+     *
+     * @param taskList Task list to be saved.
      */
     public static void save(TaskList taskList) {
         if (!verifyAndCreatePath()) {
@@ -27,15 +27,16 @@ public class Storage {
 
         // At this point, save file exists at the directory. Just save the data
         try {
-            Files.writeString(savePath, taskList.toString());
+            Files.writeString(SAVE_PATH, taskList.toString());
         } catch (IOException e) {
             System.out.println("Failed to write to save path: " + e);
         }
     }
 
     /**
-     * Returns task list from local storage. Returns empty task list if unable to
-     * @return task list from storage
+     * Loads and returns the task list from local file storage.
+     *
+     * @return Task list loaded from storage, or an empty task list if loading fails.
      */
     public static TaskList load() {
         TaskList tasks = new TaskList();
@@ -46,7 +47,7 @@ public class Storage {
         }
 
         try {
-            List<String> lines = Files.readAllLines(savePath);
+            List<String> lines = Files.readAllLines(SAVE_PATH);
 
             for (String line : lines) {
                 String[] segments = line.split("[{}]");
@@ -65,39 +66,38 @@ public class Storage {
     }
 
     /**
-     * Checks if the directory and path to the save file exists, and tries to create
-     * it if missing. If unable, will print the error and abort.
-     * @return true if successful, false otherwise
+     * Checks if the save directory and file exist, creating them if missing.
+     *
+     * @return True if the file and directory are valid and accessible, false otherwise.
      */
     private static boolean verifyAndCreatePath() {
         // First check if directory "./data" exists, try to create it if not.
-        if (!Files.exists(directoryPath)){
+        if (!Files.exists(DIRECTORY_PATH)) {
             try {
-                Files.createDirectories(directoryPath);
+                Files.createDirectories(DIRECTORY_PATH);
             } catch (IOException e) {
                 System.out.println("Could not create directory for saving data: " + e);
                 return false;
             }
-        } else if (!Files.isDirectory(directoryPath)) {
-            System.out.println(directoryPath + " is not a directory.");
+        } else if (!Files.isDirectory(DIRECTORY_PATH)) {
+            System.out.println(DIRECTORY_PATH + " is not a directory.");
             return false;
         }
 
         // Now directory exists, check if file exists. Create it if it doesn't
-        if (!Files.exists(savePath)) {
+        if (!Files.exists(SAVE_PATH)) {
             try {
-                Files.createFile(savePath);
+                Files.createFile(SAVE_PATH);
             } catch (IOException e) {
                 System.out.println("Couldn't create data.txt file: " + e);
                 return false;
             }
-        } else {
-            if (!Files.isRegularFile(savePath)) {
-                System.out.println(savePath + " is not a regular file.");
-                return false;
-            }
+        } else if (!Files.isRegularFile(SAVE_PATH)) {
+            System.out.println(SAVE_PATH + " is not a regular file.");
+            return false;
         }
 
         return true;
     }
 }
+

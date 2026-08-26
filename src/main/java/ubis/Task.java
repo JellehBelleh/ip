@@ -3,44 +3,46 @@ package ubis;
 import java.util.Arrays;
 
 /**
- * Abstract class that represents a task
+ * Represents an abstract task with a name, completion status, and task type.
  */
 public abstract class Task {
     protected String name;
-    protected boolean done;
+    protected boolean isDone;
     protected TaskType type;
 
     public Task() {
         this.name = null;
-        this.done = false;
+        this.isDone = false;
         this.type = null;
     }
 
     /**
-     * Marks the task as done
+     * Marks the task as done.
      */
     public void mark() {
-        this.done = true;
+        this.isDone = true;
     }
 
     /**
-     * Marks the task as undone
+     * Marks the task as undone.
      */
     public void unmark() {
-        this.done = false;
+        this.isDone = false;
     }
 
     /**
-     * Initialises the task given the input string. Definition is specific to task type.
-     * @param input string of arguments
-     * @return the initialised task
+     * Initialises the task given the input argument string. Specific to each task type.
+     *
+     * @param input String of arguments for task creation.
+     * @return The initialised task, or null if input was invalid.
      */
     public abstract Task initialise(String input);
 
     /**
-     * Initialises the task given the arguments as a string array.
-     * @param segments input arguments
-     * @return the initialised task
+     * Initialises the task given the arguments as a string array from storage.
+     *
+     * @param segments Input arguments parsed from storage.
+     * @return The initialised task, or null if arguments are invalid.
      */
     public static Task initialise(String[] segments) {
         if (segments.length < 3) {
@@ -49,7 +51,7 @@ public abstract class Task {
         }
 
         String symbol = segments[0];
-        boolean done = segments[1].equals("1");
+        boolean isDone = segments[1].equals("1");
         String name = segments[2];
         Task task = null;
 
@@ -57,7 +59,7 @@ public abstract class Task {
             case "T":
                 task = new Todo();
                 task.initialise(name);
-                task.done = done;
+                task.isDone = isDone;
                 break;
             case "D":
                 if (segments.length < 4) {
@@ -66,7 +68,7 @@ public abstract class Task {
                 }
                 task = new Deadline();
                 task.initialise(name + " /by " + segments[3]);
-                task.done = done;
+                task.isDone = isDone;
                 break;
             case "E":
                 if (segments.length < 5) {
@@ -75,7 +77,7 @@ public abstract class Task {
                 }
                 task = new Event();
                 task.initialise(name + " /from " + segments[3] + " /to " + segments[4]);
-                task.done = done;
+                task.isDone = isDone;
                 break;
             default:
                 System.out.println("Invalid case: " + symbol);
@@ -86,20 +88,26 @@ public abstract class Task {
     }
 
     /**
-     * Stringify the task into a format for storage. If you want
-     * to display the task, use toString() instead.
-     * @return string of the task to be stored
+     * Formats the task into a string representation suitable for file storage.
+     *
+     * @return String of the task formatted for storage.
      */
     public String stringify() {
-        return "{" + this.type.getSymbol()+ "}" + "{" + (this.done ? "1" : "0") + "}" + "{" + this.name + "}";
+        return "{" + this.type.getSymbol() + "}" + "{" + (this.isDone ? "1" : "0") + "}" + "{" + this.name + "}";
     }
 
     @Override
     public String toString() {
-        return "[" + this.type.getSymbol() + "]" + "[" + (this.done ? "X" : " ") + "] " + this.name;
+        return "[" + this.type.getSymbol() + "]" + "[" + (this.isDone ? "X" : " ") + "] " + this.name;
     }
 
+    /**
+     * Returns the name/description of the task.
+     *
+     * @return Name of the task.
+     */
     public String getName() {
         return this.name;
     }
 }
+

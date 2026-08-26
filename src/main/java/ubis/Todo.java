@@ -1,9 +1,16 @@
 package ubis;
 
 /**
- * class to represent a todo task
+ * Represents a todo task without any date or time constraints.
  */
 public class Todo extends Task {
+
+    /**
+     * Initialises the todo task with the given description.
+     *
+     * @param input Task description.
+     * @return Initialised Todo task, or null if description is invalid.
+     */
     @Override
     public Task initialise(String input) {
         if (input == null || input.isEmpty()) {
@@ -16,3 +23,4 @@ public class Todo extends Task {
         return null;
     }
 }
+

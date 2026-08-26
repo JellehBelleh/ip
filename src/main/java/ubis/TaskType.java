@@ -1,7 +1,7 @@
 package ubis;
 
 /**
- * Enum for the task types, with symbols provided
+ * Represents the different types of tasks supported by the application and their associated symbols.
  */
 public enum TaskType {
     TODO("T"),
@@ -14,7 +14,13 @@ public enum TaskType {
         this.symbol = symbol;
     }
 
+    /**
+     * Returns the single-letter symbol representing this task type.
+     *
+     * @return Single-letter symbol for storage and display.
+     */
     public String getSymbol() {
         return this.symbol;
     }
 }
+

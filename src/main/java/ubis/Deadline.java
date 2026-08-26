@@ -5,26 +5,37 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Class to represent a deadline task
+ * Represents a task that has a deadline date.
  */
 public class Deadline extends Task {
+    private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
+
     private LocalDate deadline;
 
+    /**
+     * Initialises the deadline task from user input containing description and date.
+     *
+     * @param input Input string containing description and "/by &lt;date&gt;".
+     * @return Initialised Deadline task, or null if arguments/date are invalid.
+     */
     @Override
     public Task initialise(String input) {
         if (input == null) {
             Ui.printMessage("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
         } else {
             String[] arguments = input.split(" /by ");
-            if (arguments.length < 2 || arguments[0] == null ||
-                    arguments[1] == null || arguments[0].isEmpty() || arguments[1].isEmpty()) {
+            if (arguments.length < 2
+                    || arguments[0] == null
+                    || arguments[1] == null
+                    || arguments[0].isEmpty()
+                    || arguments[1].isEmpty()) {
                 Ui.printMessage("Missing arguments, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
             } else {
                 this.name = arguments[0];
                 try {
                     this.deadline = LocalDate.parse(arguments[1]);
                 } catch (DateTimeParseException e) {
-                    Ui.printMessage("Invalid deadline format, please do \"deadline task-name /by YYYY-MM-DD\" instead. " );
+                    Ui.printMessage("Invalid deadline format, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
                     return null;
                 }
                 this.type = TaskType.DEADLINE;
@@ -36,7 +47,7 @@ public class Deadline extends Task {
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + deadline.format(DateTimeFormatter.ofPattern("MMM d yyyy")) + ")";
+        return super.toString() + " (by: " + deadline.format(OUTPUT_FORMATTER) + ")";
     }
 
     @Override
@@ -44,3 +55,4 @@ public class Deadline extends Task {
         return super.stringify() + "{" + deadline + "}";
     }
 }
+
