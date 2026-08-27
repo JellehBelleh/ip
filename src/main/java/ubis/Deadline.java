@@ -35,7 +35,8 @@ public class Deadline extends Task {
                 try {
                     this.deadline = LocalDate.parse(arguments[1]);
                 } catch (DateTimeParseException e) {
-                    Ui.printMessage("Invalid deadline format, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
+                    Ui.printMessage("Invalid deadline format, "
+                            + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
                     return null;
                 }
                 this.type = TaskType.DEADLINE;

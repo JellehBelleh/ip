@@ -32,14 +32,16 @@ public class Event extends Task {
                     || arguments[0].isEmpty()
                     || arguments[1].isEmpty()
                     || arguments[2].isEmpty()) {
-                Ui.printMessage("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+                Ui.printMessage("Missing arguments, "
+                        + "please do \"event task-name /from from-time /to to-time\" instead.");
             } else {
                 this.name = arguments[0];
                 try {
                     this.from = LocalDate.parse(arguments[1]);
                     this.to = LocalDate.parse(arguments[2]);
                 } catch (DateTimeParseException e) {
-                    Ui.printMessage("Invalid event format, please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+                    Ui.printMessage("Invalid event format, "
+                            + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
                     return null;
                 }
                 this.type = TaskType.EVENT;
