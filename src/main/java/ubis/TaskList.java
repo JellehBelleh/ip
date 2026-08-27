@@ -17,112 +17,116 @@ public class TaskList {
     }
 
     /**
-     * Adds a task to the task list and prints a confirmation message.
+     * Adds a task to the task list and returns a confirmation message.
      *
      * @param task Task to be added.
+     * @return Confirmation message of the added task.
      */
-    public void addTask(Task task) {
-        addTask(task, true);
+    public String addTask(Task task) {
+        if (task == null) {
+            return "";
+        }
+        tasks.add(task);
+        return "added: " + task;
     }
 
     /**
      * Adds the given task to the task list with an option to suppress console output.
      *
      * @param task Task to be added.
-     * @param shouldPrint Whether to print the outcome of the operation.
+     * @param shouldPrint Kept for backward compatibility.
      */
     public void addTask(Task task, boolean shouldPrint) {
-        if (task == null) {
-            return;
-        }
-        tasks.add(task);
-        if (shouldPrint) {
-            System.out.println("added: " + task);
-        }
+        addTask(task);
     }
 
     /**
-     * Removes a task from the list using its 1-based number.
+     * Removes a task from the list using its 1-based number and returns a status message.
      *
      * @param taskNumber 1-based number of the task to remove.
+     * @return Status message indicating success or failure.
      */
-    public void removeTask(int taskNumber) {
+    public String removeTask(int taskNumber) {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
-            return;
+            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
         }
 
         int index = taskNumber - 1;
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);
-        System.out.println("Okay, I've deleted " + taskDescription);
+        return "Okay, I've deleted " + taskDescription;
     }
 
     /**
-     * Prints all tasks currently stored in the list.
-     */
-    public void listTasks() {
-        listTasks(tasks);
-    }
-
-    /**
-     * Prints all tasks in the provided list.
+     * Returns a formatted string listing all tasks currently stored.
      *
-     * @param tasksToDisplay List of tasks to be printed.
+     * @return String representation of all tasks.
      */
-    private void listTasks(List<Task> tasksToDisplay) {
-        for (int i = 0; i < tasksToDisplay.size(); i++) {
-            System.out.println((i + 1) + ": " + tasksToDisplay.get(i));
-        }
-        if (tasksToDisplay.isEmpty()) {
-            System.out.println("No tasks to show");
-        }
-        Ui.printDashLine();
+    public String listTasks() {
+        return listTasks(tasks);
     }
 
     /**
-     * Marks a task as done in the list using its 1-based number.
+     * Formats the provided list of tasks into a numbered string.
+     *
+     * @param tasksToDisplay List of tasks to format.
+     * @return Formatted string of tasks.
+     */
+    private String listTasks(List<Task> tasksToDisplay) {
+        if (tasksToDisplay.isEmpty()) {
+            return "No tasks to show";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tasksToDisplay.size(); i++) {
+            if (i > 0) {
+                sb.append("\n");
+            }
+            sb.append(i + 1).append(": ").append(tasksToDisplay.get(i));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Marks a task as done using its 1-based number and returns a status message.
      *
      * @param taskNumber 1-based number of the task to mark.
+     * @return Confirmation or error message.
      */
-    public void markTask(int taskNumber) {
+    public String markTask(int taskNumber) {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
-            return;
+            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
         }
 
         Task task = tasks.get(taskNumber - 1);
         task.mark();
-        System.out.println("Nice! I've marked this task as DONE:");
-        System.out.println("  " + task);
+        return "Nice! I've marked this task as DONE:\n  " + task;
     }
 
     /**
-     * Marks a task as undone in the list using its 1-based number.
+     * Marks a task as undone using its 1-based number and returns a status message.
      *
      * @param taskNumber 1-based number of the task to unmark.
+     * @return Confirmation or error message.
      */
-    public void unmarkTask(int taskNumber) {
+    public String unmarkTask(int taskNumber) {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            System.out.println("Sorry, there is no task number " + taskNumber + ". Please try again.");
-            return;
+            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
         }
 
         Task task = tasks.get(taskNumber - 1);
         task.unmark();
-        System.out.println("Okay, I've marked this task NOT done yet:");
-        System.out.println("  " + task);
+        return "Okay, I've marked this task NOT done yet:\n  " + task;
     }
 
     /**
      * Finds and lists all tasks whose names contain the given keyword.
      *
      * @param keyword String keyword to search for in task names.
+     * @return Formatted list of matching tasks.
      */
-    public void find(String keyword) {
+    public String find(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
-            Ui.printMessage("Missing parameter for \"find\", do \"find name\" instead.");
-            return;
+            return "Missing parameter for \"find\", do \"find name\" instead.";
         }
 
         List<Task> matchingTasks = new ArrayList<>();
@@ -132,7 +136,7 @@ public class TaskList {
             }
         }
 
-        listTasks(matchingTasks);
+        return listTasks(matchingTasks);
     }
 
     @Override
