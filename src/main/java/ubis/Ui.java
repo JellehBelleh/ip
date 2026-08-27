@@ -39,6 +39,15 @@ public class Ui {
     }
 
     /**
+     * Returns the introductory welcome message for the chatbot.
+     *
+     * @return Welcome message string.
+     */
+    public static String getWelcomeMessage() {
+        return "Hello! I am Ubis.\nWhat can I do for you?";
+    }
+
+    /**
      * Prints the welcome banner and introductory message to the console.
      */
     public static void welcome() {
@@ -50,8 +59,7 @@ public class Ui {
 
         printDashLine();
         System.out.println(banner);
-        System.out.println("Hello! I am Ubis.");
-        System.out.println("What can I do for you?");
+        System.out.println(getWelcomeMessage());
         printDashLine();
     }
 

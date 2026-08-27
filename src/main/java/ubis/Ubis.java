@@ -26,6 +26,16 @@ public class Ubis {
     }
 
     /**
+     * Generates a response string for a given user input.
+     *
+     * @param input Raw user input string.
+     * @return Chatbot response string.
+     */
+    public String getResponse(String input) {
+        return parser.handleInput(input);
+    }
+
+    /**
      * Displays the welcome banner and repeatedly processes user commands until exit.
      */
     private void welcome() {
@@ -33,7 +43,12 @@ public class Ubis {
 
         // Keep handling commands. Exits when user inputs "bye"
         while (true) {
-            parser.handleInput(parser.receiveInput());
+            String input = parser.receiveInput();
+            String response = getResponse(input);
+            Ui.printMessage(response);
+            if ("bye".equalsIgnoreCase(input.trim())) {
+                exit();
+            }
         }
     }
 
