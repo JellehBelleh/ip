@@ -10,6 +10,9 @@ public abstract class Task {
     protected boolean isDone;
     protected TaskType type;
 
+    /**
+     * Constructs a default Task instance.
+     */
     public Task() {
         this.name = null;
         this.isDone = false;

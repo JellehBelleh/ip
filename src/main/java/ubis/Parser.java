@@ -7,7 +7,7 @@ import java.util.Scanner;
  */
 public class Parser {
     public static final String[] ILLEGAL_ARTIFACTS = {
-            "{", "}"
+        "{", "}"
     };
 
     private final Scanner scanner;
