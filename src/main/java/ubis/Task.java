@@ -42,12 +42,12 @@ public abstract class Task {
     public abstract Task initialise(String input);
 
     /**
-     * Initialises the task given the arguments as a string array from storage.
+     * Initialises the task given the arguments parsed from storage or test inputs.
      *
-     * @param segments Input arguments parsed from storage.
+     * @param segments Input argument segments.
      * @return The initialised task, or null if arguments are invalid.
      */
-    public static Task initialise(String[] segments) {
+    public static Task initialise(String... segments) {
         if (segments.length < 3) {
             System.out.println("Invalid String[]: " + Arrays.toString(segments));
             return null;
