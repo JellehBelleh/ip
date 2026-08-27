@@ -1,6 +1,6 @@
-# ubis.Ubis project template
+# Ubis project template
 
-This is a project template for a greenfield Java project. It's named ubis.Ubis. Given below are instructions on how to use it.
+This is a project template for a greenfield Java project. It's named Ubis. Given below are instructions on how to use it.
 
 ## Setting up in Intellij
 
