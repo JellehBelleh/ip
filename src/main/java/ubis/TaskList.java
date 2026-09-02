@@ -47,11 +47,15 @@ public class TaskList {
      * @return Status message indicating success or failure.
      */
     public String removeTask(int taskNumber) {
+        // Class invariant: the internal tasks list should always be initialized
+        assert tasks != null : "Tasks list should not be null";
+
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             return "Sorry, there is no task number " + taskNumber + ". Please try again.";
         }
 
         int index = taskNumber - 1;
+
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);
         return "Okay, I've deleted " + taskDescription;
@@ -81,7 +85,10 @@ public class TaskList {
             if (i > 0) {
                 sb.append("\n");
             }
-            sb.append(i + 1).append(": ").append(tasksToDisplay.get(i));
+            Task task = tasksToDisplay.get(i);
+            // Invariant: all tasks stored in the list must be non-null
+            assert task != null : "Task in tasksToDisplay should not be null";
+            sb.append(i + 1).append(": ").append(task);
         }
         return sb.toString();
     }
@@ -98,6 +105,8 @@ public class TaskList {
         }
 
         Task task = tasks.get(taskNumber - 1);
+        // Invariant: task retrieved from a valid index within bounds must not be null
+        assert task != null : "Task to mark should not be null";
         task.mark();
         return "Nice! I've marked this task as DONE:\n  " + task;
     }
@@ -114,6 +123,8 @@ public class TaskList {
         }
 
         Task task = tasks.get(taskNumber - 1);
+        // Invariant: task retrieved from a valid index within bounds must not be null
+        assert task != null : "Task to unmark should not be null";
         task.unmark();
         return "Okay, I've marked this task NOT done yet:\n  " + task;
     }
@@ -131,6 +142,8 @@ public class TaskList {
 
         List<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
+            // Invariant: all tasks stored in the list must be non-null
+            assert task != null : "Task in tasks should not be null";
             if (task.getName().contains(keyword)) {
                 matchingTasks.add(task);
             }

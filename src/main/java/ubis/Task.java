@@ -53,6 +53,9 @@ public abstract class Task {
             return null;
         }
 
+        // Invariant: ensure there are at least 3 segments (symbol, status, name) after passing the guard check
+        assert segments.length >= 3 : "Segments array must have at least 3 elements after guard check";
+
         String symbol = segments[0];
         boolean isDone = segments[1].equals("1");
         String name = segments[2];

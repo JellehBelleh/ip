@@ -60,6 +60,9 @@ public class Parser {
             argument = parts[1];
         }
 
+        // Invariant: splitting non-empty user input will always produce at least one token (command)
+        assert command != null : "Command token should not be null after parsing non-empty input";
+
         String response;
         switch (command) {
             case "bye":
