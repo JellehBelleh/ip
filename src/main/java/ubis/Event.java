@@ -23,32 +23,31 @@ public class Event extends Task {
     public Task initialise(String input) {
         if (input == null) {
             Ui.printMessage("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
-        } else {
-            String[] arguments = input.split(" /from | /to ");
-            if (arguments.length < 3
-                    || arguments[0] == null
-                    || arguments[1] == null
-                    || arguments[2] == null
-                    || arguments[0].isEmpty()
-                    || arguments[1].isEmpty()
-                    || arguments[2].isEmpty()) {
-                Ui.printMessage("Missing arguments, "
-                        + "please do \"event task-name /from from-time /to to-time\" instead.");
-            } else {
-                this.name = arguments[0];
-                try {
-                    this.from = LocalDate.parse(arguments[1]);
-                    this.to = LocalDate.parse(arguments[2]);
-                } catch (DateTimeParseException e) {
-                    Ui.printMessage("Invalid event format, "
-                            + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
-                    return null;
-                }
-                this.type = TaskType.EVENT;
-                return this;
-            }
+            return null;
         }
-        return null;
+
+        String[] arguments = input.split(" /from | /to ");
+        if (arguments.length < 3
+                || arguments[0].isEmpty()
+                || arguments[1].isEmpty()
+                || arguments[2].isEmpty()) {
+            Ui.printMessage("Missing arguments, "
+                    + "please do \"event task-name /from from-time /to to-time\" instead.");
+            return null;
+        }
+
+        this.name = arguments[0];
+        try {
+            this.from = LocalDate.parse(arguments[1]);
+            this.to = LocalDate.parse(arguments[2]);
+        } catch (DateTimeParseException e) {
+            Ui.printMessage("Invalid event format, "
+                    + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+            return null;
+        }
+
+        this.type = TaskType.EVENT;
+        return this;
     }
 
     @Override
@@ -62,4 +61,3 @@ public class Event extends Task {
         return super.stringify() + "{" + from + "}" + "{" + to + "}";
     }
 }
-
