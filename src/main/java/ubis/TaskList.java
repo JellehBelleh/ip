@@ -2,6 +2,7 @@ package ubis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Manages an in-memory list of tasks and supports operations such as adding, deleting, marking, and finding tasks.
@@ -76,13 +77,18 @@ public class TaskList {
         if (tasksToDisplay.isEmpty()) {
             return "No tasks to show";
         }
+
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tasksToDisplay.size(); i++) {
-            if (i > 0) {
-                sb.append("\n");
-            }
-            sb.append(i + 1).append(": ").append(tasksToDisplay.get(i));
-        }
+
+        IntStream.range(1, tasksToDisplay.size() + 1)
+                .forEach(index -> {
+                    if (index > 0) {
+                        sb.append("\n");
+                    }
+
+                    sb.append(index).append(": ").append(tasksToDisplay.get(index - 1));
+                });
+
         return sb.toString();
     }
 
