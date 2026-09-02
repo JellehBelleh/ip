@@ -54,12 +54,6 @@ public class TaskList {
             return getInvalidTaskNumberMessage(taskNumber);
         }
 
-        // Class invariant: the internal tasks list should always be initialized
-        assert tasks != null : "Tasks list should not be null";
-
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
-        }
 
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);
@@ -177,6 +171,8 @@ public class TaskList {
      * @return Zero-based task index, or a sentinel value when the number is invalid.
      */
     private int getTaskIndex(int taskNumber) {
+        assert tasks != null : "Tasks list should not be null";;
+
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             return INVALID_TASK_INDEX;
         }
