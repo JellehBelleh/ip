@@ -50,17 +50,19 @@ public class Parser {
         }
 
         String[] parts = input.trim().split(" ", 2);
-        String command = null;
-        String argument = null;
+        String command = parts[0];
+        String argument = parts.length > 1 ? parts[1] : null;
+        return executeCommand(command, argument);
+    }
 
-        if (parts.length > 0) {
-            command = parts[0];
-        }
-        if (parts.length > 1) {
-            argument = parts[1];
-        }
-
-        String response;
+    /**
+     * Executes a parsed command and returns the corresponding response.
+     *
+     * @param command Command keyword.
+     * @param argument Optional command argument.
+     * @return Response string generated for the command.
+     */
+    private String executeCommand(String command, String argument) {
         switch (command) {
             case "bye":
                 return Ui.Message.GOODBYE.getMessage();
@@ -69,69 +71,104 @@ public class Parser {
             case "help":
                 return Ui.Message.HELP.getMessage();
             case "mark":
-                if (argument == null) {
-                    return "Please add the task number you want to mark!\n"
-                            + "Example: \"mark 4\" if you want to mark the fourth task.";
-                }
-                try {
-                    response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
-                } catch (NumberFormatException e) {
-                    return "Invalid task number of: " + argument
-                            + "\nPlease try again!";
-                }
-                break;
+                return markTask(argument);
             case "unmark":
-                if (argument == null) {
-                    return "Please add the task number you want to unmark!\n"
-                            + "Example: \"unmark 4\" if you want to unmark the fourth task.";
-                }
-                try {
-                    response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
-                } catch (NumberFormatException e) {
-                    return "Invalid task number of: " + argument
-                            + "\nPlease try again!";
-                }
-                break;
+                return unmarkTask(argument);
             case "delete":
-                if (argument == null) {
-                    return "Please add the task number you want to delete!\n"
-                            + "Example: \"delete 4\" if you want to delete the fourth task.";
-                }
-                try {
-                    response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
-                } catch (NumberFormatException e) {
-                    return "Invalid task number of: " + argument
-                            + "\nPlease try again!";
-                }
-                break;
+                return deleteTask(argument);
             case "todo":
-                Task todo = new Todo().initialise(argument);
-                if (todo == null) {
-                    return "Missing task name, please do \"todo task-name\" instead.";
-                }
-                response = ubis.getTaskList().addTask(todo);
-                break;
+                return addTask(new Todo(), argument,
+                        "Missing task name, please do \"todo task-name\" instead.");
             case "deadline":
-                Task deadline = new Deadline().initialise(argument);
-                if (deadline == null) {
-                    return "Missing or invalid arguments, "
-                            + "please do \"deadline task-name /by YYYY-MM-DD\" instead.";
-                }
-                response = ubis.getTaskList().addTask(deadline);
-                break;
+                return addTask(new Deadline(), argument,
+                        "Missing or invalid arguments, "
+                                + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
             case "event":
-                Task event = new Event().initialise(argument);
-                if (event == null) {
-                    return "Missing or invalid arguments, "
-                            + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.";
-                }
-                response = ubis.getTaskList().addTask(event);
-                break;
+                return addTask(new Event(), argument,
+                        "Missing or invalid arguments, "
+                                + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
             case "find":
                 return ubis.getTaskList().find(argument);
             default:
                 return "Unknown command \"" + command + "\". Type \"help\" for commands!";
         }
+    }
+
+    /**
+     * Marks a task after validating its task number.
+     *
+     * @param argument Task number argument.
+     * @return Response string generated for the command.
+     */
+    private String markTask(String argument) {
+        if (argument == null) {
+            return "Please add the task number you want to mark!\n"
+                    + "Example: \"mark 4\" if you want to mark the fourth task.";
+        }
+        try {
+            String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
+            Storage.save(ubis.getTaskList());
+            return response;
+        } catch (NumberFormatException e) {
+            return "Invalid task number of: " + argument + "\nPlease try again!";
+        }
+    }
+
+    /**
+     * Unmarks a task after validating its task number.
+     *
+     * @param argument Task number argument.
+     * @return Response string generated for the command.
+     */
+    private String unmarkTask(String argument) {
+        if (argument == null) {
+            return "Please add the task number you want to unmark!\n"
+                    + "Example: \"unmark 4\" if you want to unmark the fourth task.";
+        }
+        try {
+            String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
+            Storage.save(ubis.getTaskList());
+            return response;
+        } catch (NumberFormatException e) {
+            return "Invalid task number of: " + argument + "\nPlease try again!";
+        }
+    }
+
+    /**
+     * Deletes a task after validating its task number.
+     *
+     * @param argument Task number argument.
+     * @return Response string generated for the command.
+     */
+    private String deleteTask(String argument) {
+        if (argument == null) {
+            return "Please add the task number you want to delete!\n"
+                    + "Example: \"delete 4\" if you want to delete the fourth task.";
+        }
+        try {
+            String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
+            Storage.save(ubis.getTaskList());
+            return response;
+        } catch (NumberFormatException e) {
+            return "Invalid task number of: " + argument + "\nPlease try again!";
+        }
+    }
+
+    /**
+     * Initialises and adds a task, saving the updated list when successful.
+     *
+     * @param task Task object used to initialise the requested task type.
+     * @param argument Task creation argument.
+     * @param invalidMessage Response returned when the argument is invalid.
+     * @return Response string generated for the command.
+     */
+    private String addTask(Task task, String argument, String invalidMessage) {
+        Task initialisedTask = task.initialise(argument);
+        if (initialisedTask == null) {
+            return invalidMessage;
+        }
+
+        String response = ubis.getTaskList().addTask(initialisedTask);
         Storage.save(ubis.getTaskList());
         return response;
     }
@@ -159,4 +196,3 @@ public class Parser {
         scanner.close();
     }
 }
-
