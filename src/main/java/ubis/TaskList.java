@@ -180,7 +180,7 @@ public class TaskList {
      * @return Zero-based task index, or a sentinel value when the number is invalid.
      */
     private int getTaskIndex(int taskNumber) {
-        assert tasks != null : "Tasks list should not be null";;
+        assert tasks != null : "Tasks list should not be null";
 
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             return INVALID_TASK_INDEX;
