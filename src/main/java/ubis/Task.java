@@ -6,6 +6,9 @@ import java.util.Arrays;
  * Represents an abstract task with a name, completion status, and task type.
  */
 public abstract class Task {
+    private static final String COMPLETED_STATUS = "1";
+    private static final String INCOMPLETE_STATUS = "0";
+
     protected String name;
     protected boolean isDone;
     protected TaskType type;
@@ -53,43 +56,77 @@ public abstract class Task {
             return null;
         }
 
-        // Invariant: ensure there are at least 3 segments (symbol, status, name) after passing the guard check
-        assert segments.length >= 3 : "Segments array must have at least 3 elements after guard check";
-
-        String symbol = segments[0];
-        boolean isDone = segments[1].equals("1");
-        String name = segments[2];
-        Task task = null;
-
-        switch (symbol) {
-            case "T":
-                task = new Todo();
-                task.initialise(name);
-                task.isDone = isDone;
-                break;
-            case "D":
-                if (segments.length < 4) {
-                    System.out.println("Not enough arguments for deadline: " + Arrays.toString(segments));
-                    break;
-                }
-                task = new Deadline();
-                task.initialise(name + " /by " + segments[3]);
-                task.isDone = isDone;
-                break;
-            case "E":
-                if (segments.length < 5) {
-                    System.out.println("Not enough arguments for event: " + Arrays.toString(segments));
-                    break;
-                }
-                task = new Event();
-                task.initialise(name + " /from " + segments[3] + " /to " + segments[4]);
-                task.isDone = isDone;
-                break;
-            default:
-                System.out.println("Invalid case: " + symbol);
-                break;
+        TaskType taskType = TaskType.fromSymbol(segments[0]);
+        if (taskType == null) {
+            System.out.println("Invalid case: " + segments[0]);
+            return null;
         }
 
+        boolean isDone = segments[1].equals(COMPLETED_STATUS);
+        Task task;
+        switch (taskType) {
+            case TODO:
+                task = initialiseTodo(segments[2]);
+                break;
+            case DEADLINE:
+                task = initialiseDeadline(segments);
+                break;
+            case EVENT:
+                task = initialiseEvent(segments);
+                break;
+            default:
+                return null;
+        }
+
+        if (task != null) {
+            task.isDone = isDone;
+        }
+        return task;
+    }
+
+    /**
+     * Creates a todo task from storage data.
+     *
+     * @param name Stored todo task name.
+     * @return Initialised todo task.
+     */
+    private static Task initialiseTodo(String name) {
+        Task task = new Todo();
+        task.initialise(name);
+        return task;
+    }
+
+    /**
+     * Creates a deadline task from storage data.
+     *
+     * @param segments Stored deadline task segments.
+     * @return Initialised deadline task, or null when its date is missing.
+     */
+    private static Task initialiseDeadline(String[] segments) {
+        if (segments.length < 4) {
+            System.out.println("Not enough arguments for deadline: " + Arrays.toString(segments));
+            return null;
+        }
+
+        Task task = new Deadline();
+        task.initialise(segments[2] + " /by " + segments[3]);
+        return task;
+    }
+
+    /**
+     * Creates an event task from storage data.
+     *
+     * @param segments Stored event task segments.
+     * @return Initialised event task, or null when a date is missing.
+     */
+    private static Task initialiseEvent(String[] segments) {
+        if (segments.length < 5) {
+            System.out.println("Not enough arguments for event: " + Arrays.toString(segments));
+            return null;
+        }
+
+        Task task = new Event();
+        task.initialise(segments[2] + " /from " + segments[3] + " /to " + segments[4]);
         return task;
     }
 
@@ -99,7 +136,8 @@ public abstract class Task {
      * @return String of the task formatted for storage.
      */
     public String stringify() {
-        return "{" + this.type.getSymbol() + "}" + "{" + (this.isDone ? "1" : "0") + "}" + "{" + this.name + "}";
+        String status = this.isDone ? COMPLETED_STATUS : INCOMPLETE_STATUS;
+        return "{" + this.type.getSymbol() + "}" + "{" + status + "}" + "{" + this.name + "}";
     }
 
     @Override
@@ -116,4 +154,3 @@ public abstract class Task {
         return this.name;
     }
 }
-
