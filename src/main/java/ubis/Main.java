@@ -24,7 +24,20 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Initialize components
+        AnchorPane mainLayout = initializeComponents();
+        configureStage(stage, new Scene(mainLayout));
+        configureLayout(mainLayout);
+        configureEventHandlers(stage);
+        showWelcomeMessage();
+        stage.show();
+    }
+
+    /**
+     * Creates the controls used by the main window and places them in the root layout.
+     *
+     * @return Root layout containing the main window controls.
+     */
+    private AnchorPane initializeComponents() {
         scrollPane = new ScrollPane();
         dialogContainer = new VBox();
         dialogContainer.setSpacing(10);
@@ -37,16 +50,29 @@ public class Main extends Application {
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
+        return mainLayout;
+    }
 
-        Scene scene = new Scene(mainLayout);
-
-        // Configure stage properties
+    /**
+     * Configures the primary stage properties.
+     *
+     * @param stage Primary application stage.
+     * @param scene Scene displayed by the stage.
+     */
+    private void configureStage(Stage stage, Scene scene) {
         stage.setScene(scene);
         stage.setTitle("Ubis Chatbot");
         stage.setResizable(true);
         stage.setMinHeight(600.0);
         stage.setMinWidth(400.0);
+    }
 
+    /**
+     * Configures the preferred sizes, scroll behavior, and anchors of the main layout.
+     *
+     * @param mainLayout Root layout containing the main window controls.
+     */
+    private void configureLayout(AnchorPane mainLayout) {
         mainLayout.setPrefSize(400.0, 600.0);
 
         scrollPane.setPrefSize(385, 535);
@@ -72,18 +98,25 @@ public class Main extends Application {
 
         AnchorPane.setBottomAnchor(sendButton, 1.0);
         AnchorPane.setRightAnchor(sendButton, 1.0);
+    }
 
-        // Auto-scroll to the bottom when new dialog messages are added
+    /**
+     * Registers listeners and handlers for user interaction with the main window.
+     *
+     * @param stage Primary application stage used when handling user input.
+     */
+    private void configureEventHandlers(Stage stage) {
         dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
 
-        // Event handlers for user input
         sendButton.setOnMouseClicked((event) -> handleUserInput(stage));
         userInput.setOnAction((event) -> handleUserInput(stage));
+    }
 
-        // Show welcome greeting on startup
+    /**
+     * Adds the initial welcome greeting to the dialog area.
+     */
+    private void showWelcomeMessage() {
         dialogContainer.getChildren().add(DialogBox.getUbisDialog(Ui.getWelcomeMessage()));
-
-        stage.show();
     }
 
     /**
