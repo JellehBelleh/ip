@@ -8,6 +8,8 @@ import java.util.stream.IntStream;
  * Manages an in-memory list of tasks and supports operations such as adding, deleting, marking, and finding tasks.
  */
 public class TaskList {
+    private static final int INVALID_TASK_INDEX = -1;
+
     private List<Task> tasks;
 
     /**
@@ -48,11 +50,12 @@ public class TaskList {
      * @return Status message indicating success or failure.
      */
     public String removeTask(int taskNumber) {
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
+        int index = getTaskIndex(taskNumber);
+        if (index == INVALID_TASK_INDEX) {
+            return getInvalidTaskNumberMessage(taskNumber);
         }
 
-        int index = taskNumber - 1;
+
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);
         return "Okay, I've deleted " + taskDescription;
@@ -86,7 +89,10 @@ public class TaskList {
                         sb.append("\n");
                     }
 
-                    sb.append(index).append(": ").append(tasksToDisplay.get(index - 1));
+                    Task task = tasksToDisplay.get(index - 1);
+                    assert task != null : "Task in tasksToDisplay should not be null";
+
+                    sb.append(index).append(": ").append(task);
                 });
 
         return sb.toString();
@@ -99,11 +105,15 @@ public class TaskList {
      * @return Confirmation or error message.
      */
     public String markTask(int taskNumber) {
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
+        int index = getTaskIndex(taskNumber);
+        if (index == INVALID_TASK_INDEX) {
+            return getInvalidTaskNumberMessage(taskNumber);
         }
 
-        Task task = tasks.get(taskNumber - 1);
+        Task task = tasks.get(index);
+        // Invariant: task retrieved from a valid index within bounds must not be null
+        assert task != null : "Task to mark should not be null";
+
         task.mark();
         return "Nice! I've marked this task as DONE:\n  " + task;
     }
@@ -115,11 +125,15 @@ public class TaskList {
      * @return Confirmation or error message.
      */
     public String unmarkTask(int taskNumber) {
-        if (taskNumber < 1 || taskNumber > tasks.size()) {
-            return "Sorry, there is no task number " + taskNumber + ". Please try again.";
+        int index = getTaskIndex(taskNumber);
+        if (index == INVALID_TASK_INDEX) {
+            return getInvalidTaskNumberMessage(taskNumber);
         }
 
-        Task task = tasks.get(taskNumber - 1);
+        Task task = tasks.get(index);
+        // Invariant: task retrieved from a valid index within bounds must not be null
+        assert task != null : "Task to unmark should not be null";
+
         task.unmark();
         return "Okay, I've marked this task NOT done yet:\n  " + task;
     }
@@ -137,6 +151,9 @@ public class TaskList {
 
         List<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
+            // Invariant: all tasks stored in the list must be non-null
+            assert task != null : "Task in tasks should not be null";
+
             if (task.getName().contains(keyword)) {
                 matchingTasks.add(task);
             }
@@ -155,5 +172,29 @@ public class TaskList {
 
         return result.toString();
     }
-}
 
+    /**
+     * Converts a one-based task number into a zero-based list index.
+     *
+     * @param taskNumber One-based task number.
+     * @return Zero-based task index, or a sentinel value when the number is invalid.
+     */
+    private int getTaskIndex(int taskNumber) {
+        assert tasks != null : "Tasks list should not be null";;
+
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            return INVALID_TASK_INDEX;
+        }
+        return taskNumber - 1;
+    }
+
+    /**
+     * Builds the shared response for an invalid task number.
+     *
+     * @param taskNumber Invalid one-based task number.
+     * @return Error message for the invalid task number.
+     */
+    private String getInvalidTaskNumberMessage(int taskNumber) {
+        return "Sorry, there is no task number " + taskNumber + ". Please try again.";
+    }
+}
