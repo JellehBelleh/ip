@@ -17,15 +17,34 @@ public class Ui {
                 + "type \"help\" for information on commands."),
         ILLEGAL_INPUT("Sorry! Please ensure input does not contain any of the following characters: \n"
                 + Arrays.toString(Parser.ILLEGAL_ARTIFACTS)),
-        HELP("Here are some commands:\n"
-                + "   list - list all tasks\n"
-                + "   mark n - mark the nth task as done\n"
-                + "   unmark n - mark the nth task as NOT done\n"
-                + "   todo task-name - add a task\n"
-                + "   deadline task-name /by task-deadline - add a deadline\n"
-                + "   event task-name /from start /to end - add an event\n"
-                + "   delete n - delete the nth task\n"
-                + "   bye - exit the program");
+        HELP("Here are Ubis's commands:\n"
+                + "Replace values inside <angle brackets> with your own values.\n\n"
+                + "CREATE TASKS\n"
+                + "  todo <task name>\n"
+                + "    Add a todo.\n"
+                + "    Example: todo read a book\n\n"
+                + "  deadline <task name> /by <YYYY-MM-DD>\n"
+                + "    Add a task with a deadline.\n"
+                + "    Example: deadline submit report /by 2026-09-30\n\n"
+                + "  event <task name> /from <YYYY-MM-DD> /to <YYYY-MM-DD>\n"
+                + "    Add an event with a start and end date.\n"
+                + "    Example: event school camp /from 2026-10-01 /to 2026-10-03\n\n"
+                + "VIEW AND MANAGE TASKS\n"
+                + "  list\n"
+                + "    Show all tasks.\n\n"
+                + "  find <keyword>\n"
+                + "    Show tasks whose names contain the keyword.\n\n"
+                + "  mark <task number>\n"
+                + "    Mark a task as done.\n\n"
+                + "  unmark <task number>\n"
+                + "    Mark a task as not done.\n\n"
+                + "  delete <task number>\n"
+                + "    Delete a task.\n\n"
+                + "OTHER COMMANDS\n"
+                + "  help\n"
+                + "    Show this help message.\n\n"
+                + "  bye\n"
+                + "    Exit Ubis.");
 
         private final String message;
 
@@ -90,4 +109,3 @@ public class Ui {
         printDashLine();
     }
 }
-
