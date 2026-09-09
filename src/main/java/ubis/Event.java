@@ -46,6 +46,11 @@ public class Event extends Task {
             return null;
         }
 
+        if (!from.isBefore(to)) {
+            Ui.printMessage("Invalid event period: the start date must be before the end date.");
+            return null;
+        }
+
         this.type = TaskType.EVENT;
         return this;
     }
