@@ -146,7 +146,7 @@ public class TaskList {
      */
     public String find(String keyword) {
         if (keyword == null || keyword.isBlank()) {
-            return "Missing parameter for \"find\", do \"find name\" instead.";
+            return "Please provide a keyword to find.\nExample: find book";
         }
 
         String trimmedKeyword = keyword.trim();
@@ -160,7 +160,7 @@ public class TaskList {
             }
         }
 
-        return listTasks(matchingTasks);
+        return matchingTasks.isEmpty() ? "No matching tasks found." : listTasks(matchingTasks);
     }
 
     @Override
@@ -196,6 +196,6 @@ public class TaskList {
      * @return Error message for the invalid task number.
      */
     private String getInvalidTaskNumberMessage(int taskNumber) {
-        return "Sorry, there is no task number " + taskNumber + ". Please try again.";
+        return "There is no task number " + taskNumber + ". Enter a task number shown by \"list\".";
     }
 }

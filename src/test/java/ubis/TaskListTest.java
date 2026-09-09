@@ -11,14 +11,23 @@ public class TaskListTest {
     @Test
     public void find_blankKeyword_returnsMissingParameterMessage() {
         TaskList tasks = new TaskList();
-        assertEquals("Missing parameter for \"find\", do \"find name\" instead.", tasks.find("   \t"));
+        assertEquals("Please provide a keyword to find.\nExample: find book", tasks.find("   \t"));
+    }
+
+    @Test
+    public void find_noMatches_returnsSpecificMessage() {
+        TaskList tasks = new TaskList();
+        tasks.addTask(new Todo().initialise("read book"));
+        assertEquals("No matching tasks found.", tasks.find("exercise"));
     }
 
     @Test
     public void taskNumber_outOfBounds_returnsErrorMessage() {
         TaskList tasks = new TaskList();
-        assertEquals("Sorry, there is no task number 0. Please try again.", tasks.markTask(0));
-        assertEquals("Sorry, there is no task number -1. Please try again.", tasks.removeTask(-1));
-        assertEquals("Sorry, there is no task number 1. Please try again.", tasks.unmarkTask(1));
+        assertEquals("There is no task number 0. Enter a task number shown by \"list\".", tasks.markTask(0));
+        assertEquals("There is no task number -1. Enter a task number shown by \"list\".",
+                tasks.removeTask(-1));
+        assertEquals("There is no task number 1. Enter a task number shown by \"list\".",
+                tasks.unmarkTask(1));
     }
 }

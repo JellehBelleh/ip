@@ -12,6 +12,7 @@ public abstract class Task {
     protected String name;
     protected boolean isDone;
     protected TaskType type;
+    private String initialisationError;
 
     /**
      * Constructs a default Task instance.
@@ -20,6 +21,7 @@ public abstract class Task {
         this.name = null;
         this.isDone = false;
         this.type = null;
+        this.initialisationError = null;
     }
 
     /**
@@ -97,6 +99,24 @@ public abstract class Task {
             task.isDone = isDone;
         }
         return task;
+    }
+
+    /**
+     * Records why task initialisation failed so the parser can show the reason to the user.
+     *
+     * @param message User-facing validation message.
+     */
+    protected void setInitialisationError(String message) {
+        this.initialisationError = message;
+    }
+
+    /**
+     * Returns the validation message recorded during a failed initialisation.
+     *
+     * @return User-facing validation message, or null if no validation error was recorded.
+     */
+    public String getInitialisationError() {
+        return initialisationError;
     }
 
     /**

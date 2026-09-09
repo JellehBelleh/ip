@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
  */
 public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
-    private static final Pattern ARGUMENT_PATTERN = Pattern.compile(
-            "^(.+?)\\s+/from\\s+(\\S+)\\s+/to\\s+(\\S+)$");
     private static final Pattern FROM_PARAMETER_PATTERN = Pattern.compile("(?<!\\S)/from(?!\\S)");
     private static final Pattern TO_PARAMETER_PATTERN = Pattern.compile("(?<!\\S)/to(?!\\S)");
 
@@ -27,34 +25,67 @@ public class Event extends Task {
      */
     @Override
     public Task initialise(String input) {
-        if (input == null) {
-            Ui.printMessage("Missing arguments, please do \"event task-name /from from-time /to to-time\" instead.");
+        if (input == null || input.isBlank()) {
+            setInitialisationError("Please provide an event name, start date, and end date.\n"
+                    + "Example: event school camp /from 2026-10-01 /to 2026-10-03");
             return null;
         }
 
         String trimmedInput = input.trim();
-        Matcher arguments = ARGUMENT_PATTERN.matcher(trimmedInput);
-        if (!occursExactlyOnce(FROM_PARAMETER_PATTERN, trimmedInput)
-                || !occursExactlyOnce(TO_PARAMETER_PATTERN, trimmedInput)
-                || !arguments.matches()
-                || arguments.group(1).isBlank()) {
-            Ui.printMessage("Missing arguments, "
-                    + "please do \"event task-name /from from-time /to to-time\" instead.");
+        int fromParameterCount = countOccurrences(FROM_PARAMETER_PATTERN, trimmedInput);
+        int toParameterCount = countOccurrences(TO_PARAMETER_PATTERN, trimmedInput);
+        if (fromParameterCount != 1) {
+            setInitialisationError("An event must contain exactly one \"/from\" parameter.");
+            return null;
+        }
+        if (toParameterCount != 1) {
+            setInitialisationError("An event must contain exactly one \"/to\" parameter.");
             return null;
         }
 
-        this.name = arguments.group(1).trim();
+        Matcher fromParameter = FROM_PARAMETER_PATTERN.matcher(trimmedInput);
+        Matcher toParameter = TO_PARAMETER_PATTERN.matcher(trimmedInput);
+        fromParameter.find();
+        toParameter.find();
+        if (fromParameter.start() > toParameter.start()) {
+            setInitialisationError("The \"/from\" parameter must appear before \"/to\".");
+            return null;
+        }
+
+        String taskName = trimmedInput.substring(0, fromParameter.start()).trim();
+        String fromDateText = trimmedInput.substring(fromParameter.end(), toParameter.start()).trim();
+        String toDateText = trimmedInput.substring(toParameter.end()).trim();
+        if (taskName.isBlank()) {
+            setInitialisationError("Please provide an event name before \"/from\".");
+            return null;
+        }
+        if (fromDateText.isBlank()) {
+            setInitialisationError("Please provide a start date after \"/from\" in YYYY-MM-DD format.");
+            return null;
+        }
+        if (toDateText.isBlank()) {
+            setInitialisationError("Please provide an end date after \"/to\" in YYYY-MM-DD format.");
+            return null;
+        }
+
+        this.name = taskName;
         try {
-            this.from = LocalDate.parse(arguments.group(2));
-            this.to = LocalDate.parse(arguments.group(3));
+            this.from = LocalDate.parse(fromDateText);
         } catch (DateTimeParseException e) {
-            Ui.printMessage("Invalid event format, "
-                    + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+            setInitialisationError("The event start date is invalid. "
+                    + "Use YYYY-MM-DD and enter a real calendar date.");
+            return null;
+        }
+        try {
+            this.to = LocalDate.parse(toDateText);
+        } catch (DateTimeParseException e) {
+            setInitialisationError("The event end date is invalid. "
+                    + "Use YYYY-MM-DD and enter a real calendar date.");
             return null;
         }
 
         if (!from.isBefore(to)) {
-            Ui.printMessage("Invalid event period: the start date must be before the end date.");
+            setInitialisationError("The event start date must be earlier than the end date.");
             return null;
         }
 
@@ -63,15 +94,19 @@ public class Event extends Task {
     }
 
     /**
-     * Checks that a standalone command parameter occurs exactly once in the input.
+     * Counts occurrences of a standalone command parameter in the input.
      *
      * @param parameterPattern Pattern matching the standalone parameter.
      * @param input Event arguments to inspect.
-     * @return True if the parameter occurs exactly once.
+     * @return Number of standalone parameter occurrences.
      */
-    private static boolean occursExactlyOnce(Pattern parameterPattern, String input) {
+    private static int countOccurrences(Pattern parameterPattern, String input) {
         Matcher matcher = parameterPattern.matcher(input);
-        return matcher.find() && !matcher.find();
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
     }
 
     @Override

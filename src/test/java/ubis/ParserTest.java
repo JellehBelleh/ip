@@ -34,13 +34,63 @@ public class ParserTest {
     public void handleInput_malformedTaskNumbers_returnsError() {
         Ubis ubis = new Ubis(new TaskList());
         String[] invalidCommands = {
-            "mark -1", "mark 1 2", "unmark 1.5", "delete +1", "delete task",
-            "mark 999999999999999999999999"
+            "mark -1", "mark 1 2", "unmark 1.5", "delete +1", "delete task"
         };
 
         for (String command : invalidCommands) {
             assertTrue(ubis.getResponse(command).contains("Please enter one positive whole number."));
         }
+        assertEquals("That task number is too large. Please enter a task number shown by \"list\".",
+                ubis.getResponse("mark 999999999999999999999999"));
+    }
+
+    @Test
+    public void handleInput_invalidTodo_returnsSpecificMessage() {
+        Ubis ubis = new Ubis(new TaskList());
+        assertEquals("Please provide a name for the todo.\nExample: todo read a book",
+                ubis.getResponse("todo"));
+    }
+
+    @Test
+    public void handleInput_invalidDeadline_returnsSpecificMessage() {
+        Ubis ubis = new Ubis(new TaskList());
+
+        assertTrue(ubis.getResponse("deadline report").contains("needs a \"/by\" parameter"));
+        assertEquals("Please provide a task name before \"/by\".",
+                ubis.getResponse("deadline /by 2026-09-30"));
+        assertTrue(ubis.getResponse("deadline report /by").contains("provide a deadline date"));
+        assertTrue(ubis.getResponse("deadline report /by 2026-02-30").contains("date is invalid"));
+        assertTrue(ubis.getResponse(
+                "deadline report /by 2026-09-29 /by 2026-09-30").contains("exactly one \"/by\""));
+    }
+
+    @Test
+    public void handleInput_invalidEventParameters_returnsSpecificMessage() {
+        Ubis ubis = new Ubis(new TaskList());
+
+        assertTrue(ubis.getResponse("event camp").contains("exactly one \"/from\""));
+        assertTrue(ubis.getResponse("event camp /from 2026-09-01").contains("exactly one \"/to\""));
+        assertEquals("The \"/from\" parameter must appear before \"/to\".",
+                ubis.getResponse("event camp /to 2026-09-03 /from 2026-09-01"));
+        assertTrue(ubis.getResponse(
+                "event camp /from 2026-09-01 /from 2026-09-02 /to 2026-09-03")
+                .contains("exactly one \"/from\""));
+        assertTrue(ubis.getResponse("event /from 2026-09-01 /to 2026-09-03")
+                .contains("provide an event name"));
+    }
+
+    @Test
+    public void handleInput_invalidEventDates_returnsSpecificMessage() {
+        Ubis ubis = new Ubis(new TaskList());
+
+        assertTrue(ubis.getResponse("event camp /from bad-date /to 2026-09-03")
+                .contains("start date is invalid"));
+        assertTrue(ubis.getResponse("event camp /from 2026-09-01 /to bad-date")
+                .contains("end date is invalid"));
+        assertEquals("The event start date must be earlier than the end date.",
+                ubis.getResponse("event camp /from 2026-09-03 /to 2026-09-01"));
+        assertEquals("The event start date must be earlier than the end date.",
+                ubis.getResponse("event camp /from 2026-09-03 /to 2026-09-03"));
     }
 
     @Test

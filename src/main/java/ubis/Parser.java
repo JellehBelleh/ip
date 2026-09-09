@@ -92,16 +92,11 @@ public class Parser {
             case "delete":
                 return deleteTask(argument);
             case "todo":
-                return addTask(new Todo(), argument,
-                        "Missing task name, please do \"todo task-name\" instead.");
+                return addTask(new Todo(), argument);
             case "deadline":
-                return addTask(new Deadline(), argument,
-                        "Missing or invalid arguments, "
-                                + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
+                return addTask(new Deadline(), argument);
             case "event":
-                return addTask(new Event(), argument,
-                        "Missing or invalid arguments, "
-                                + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+                return addTask(new Event(), argument);
             case "find":
                 return ubis.getTaskList().find(argument);
             default:
@@ -142,7 +137,7 @@ public class Parser {
             String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return getInvalidTaskNumberMessage(argument);
+            return getTaskNumberTooLargeMessage();
         }
     }
 
@@ -164,7 +159,7 @@ public class Parser {
             String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return getInvalidTaskNumberMessage(argument);
+            return getTaskNumberTooLargeMessage();
         }
     }
 
@@ -186,7 +181,7 @@ public class Parser {
             String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return getInvalidTaskNumberMessage(argument);
+            return getTaskNumberTooLargeMessage();
         }
     }
 
@@ -197,7 +192,16 @@ public class Parser {
      * @return Error response explaining the invalid value.
      */
     private String getInvalidTaskNumberMessage(String argument) {
-        return "Invalid task number of: " + argument + "\nPlease enter one positive whole number.";
+        return "\"" + argument + "\" is not a valid task number. Please enter one positive whole number.";
+    }
+
+    /**
+     * Returns a specific response when a numeric task number is too large for the application.
+     *
+     * @return Error response for an integer overflow.
+     */
+    private String getTaskNumberTooLargeMessage() {
+        return "That task number is too large. Please enter a task number shown by \"list\".";
     }
 
     /**
@@ -205,13 +209,13 @@ public class Parser {
      *
      * @param task Task object used to initialise the requested task type.
      * @param argument Task creation argument.
-     * @param invalidMessage Response returned when the argument is invalid.
      * @return Response string generated for the command.
      */
-    private String addTask(Task task, String argument, String invalidMessage) {
+    private String addTask(Task task, String argument) {
         Task initialisedTask = task.initialise(argument);
         if (initialisedTask == null) {
-            return invalidMessage;
+            String errorMessage = task.getInitialisationError();
+            return errorMessage == null ? "The task details are invalid. Please try again." : errorMessage;
         }
 
         String response = ubis.getTaskList().addTask(initialisedTask);
