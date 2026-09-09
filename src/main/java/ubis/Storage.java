@@ -6,14 +6,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Handles saving and loading task data to and from the local storage file.
  */
 public class Storage {
     private static final Path SAVE_PATH = Paths.get("data", "data.txt");
+    private static final Pattern STORAGE_FIELD_PATTERN = Pattern.compile("\\{([^{}]*)}");
 
     /**
      * Saves the task list into local file storage.
@@ -101,13 +104,11 @@ public class Storage {
         try {
             List<String> lines = Files.readAllLines(savePath);
 
-            for (String line : lines) {
-                String[] segments = line.split("[{}]");
-                segments = Arrays.stream(segments)
-                        .filter(s -> !s.isEmpty())
-                        .toArray(String[]::new);
-
-                tasks.addTask(Task.initialise(segments), false);
+            for (int index = 0; index < lines.size(); index++) {
+                Task task = parseStoredTask(lines.get(index), index + 1);
+                if (task != null) {
+                    tasks.addTask(task, false);
+                }
             }
         } catch (IOException | SecurityException e) {
             System.out.println("Error reading file: " + e);
@@ -115,6 +116,48 @@ public class Storage {
         }
 
         return tasks;
+    }
+
+    /**
+     * Parses one storage record while rejecting stray text and malformed field delimiters.
+     *
+     * @param line Storage record to parse.
+     * @param lineNumber One-based source line number used in diagnostics.
+     * @return Parsed task, or null if the record is malformed.
+     */
+    private static Task parseStoredTask(String line, int lineNumber) {
+        List<String> fields = new ArrayList<>();
+        Matcher matcher = STORAGE_FIELD_PATTERN.matcher(line);
+        int parsedUntil = 0;
+
+        while (matcher.find()) {
+            if (matcher.start() != parsedUntil) {
+                printMalformedRecordMessage(lineNumber);
+                return null;
+            }
+            fields.add(matcher.group(1));
+            parsedUntil = matcher.end();
+        }
+
+        if (parsedUntil != line.length() || fields.isEmpty()) {
+            printMalformedRecordMessage(lineNumber);
+            return null;
+        }
+
+        Task task = Task.initialise(fields.toArray(String[]::new));
+        if (task == null) {
+            printMalformedRecordMessage(lineNumber);
+        }
+        return task;
+    }
+
+    /**
+     * Reports that a storage record was skipped without exposing its potentially unsafe contents.
+     *
+     * @param lineNumber One-based line number of the malformed record.
+     */
+    private static void printMalformedRecordMessage(int lineNumber) {
+        System.out.println("Skipping malformed task data on line " + lineNumber + ".");
     }
 
     /**

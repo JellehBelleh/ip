@@ -51,7 +51,7 @@ public abstract class Task {
      * @return The initialised task, or null if arguments are invalid.
      */
     public static Task initialise(String... segments) {
-        if (segments.length < 3) {
+        if (segments == null || segments.length < 3) {
             System.out.println("Invalid String[]: " + Arrays.toString(segments));
             return null;
         }
@@ -59,6 +59,21 @@ public abstract class Task {
         TaskType taskType = TaskType.fromSymbol(segments[0]);
         if (taskType == null) {
             System.out.println("Invalid case: " + segments[0]);
+            return null;
+        }
+
+        if (!segments[1].equals(COMPLETED_STATUS) && !segments[1].equals(INCOMPLETE_STATUS)) {
+            System.out.println("Invalid task status: " + segments[1]);
+            return null;
+        }
+
+        if (!hasExpectedNumberOfSegments(taskType, segments.length)) {
+            System.out.println("Invalid number of fields for " + taskType + ": " + segments.length);
+            return null;
+        }
+
+        if (segments[2].isBlank()) {
+            System.out.println("Task name cannot be blank.");
             return null;
         }
 
@@ -85,6 +100,26 @@ public abstract class Task {
     }
 
     /**
+     * Checks that a stored task has exactly the number of fields required by its type.
+     *
+     * @param taskType Stored task type.
+     * @param segmentCount Number of fields in the storage record.
+     * @return True if the field count matches the task type.
+     */
+    private static boolean hasExpectedNumberOfSegments(TaskType taskType, int segmentCount) {
+        switch (taskType) {
+            case TODO:
+                return segmentCount == 3;
+            case DEADLINE:
+                return segmentCount == 4;
+            case EVENT:
+                return segmentCount == 5;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Creates a todo task from storage data.
      *
      * @param name Stored todo task name.
@@ -92,8 +127,7 @@ public abstract class Task {
      */
     private static Task initialiseTodo(String name) {
         Task task = new Todo();
-        task.initialise(name);
-        return task;
+        return task.initialise(name);
     }
 
     /**
@@ -109,8 +143,7 @@ public abstract class Task {
         }
 
         Task task = new Deadline();
-        task.initialise(segments[2] + " /by " + segments[3]);
-        return task;
+        return task.initialise(segments[2] + " /by " + segments[3]);
     }
 
     /**
@@ -126,8 +159,7 @@ public abstract class Task {
         }
 
         Task task = new Event();
-        task.initialise(segments[2] + " /from " + segments[3] + " /to " + segments[4]);
-        return task;
+        return task.initialise(segments[2] + " /from " + segments[3] + " /to " + segments[4]);
     }
 
     /**
