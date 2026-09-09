@@ -61,4 +61,32 @@ public class TaskTest {
         assertNull(Task.initialise("D", "0", "submit", "2026-09-01", "unexpected"));
         assertNull(Task.initialise("E", "0", "trip", "2026-09-01", "2026-09-03", "unexpected"));
     }
+
+    @Test
+    public void initialise_nullArray_returnsNull() {
+        assertNull(Task.initialise((String[]) null));
+    }
+
+    @Test
+    public void initialise_invalidStoredDates_returnsNull() {
+        assertNull(Task.initialise("D", "0", "report", "bad-date"));
+        assertNull(Task.initialise("E", "0", "trip", "2026-09-03", "2026-09-01"));
+        assertNull(Task.initialise("E", "0", "trip", "2026-09-01", "bad-date"));
+    }
+
+    @Test
+    public void initialise_eachCompletionState_restoresDisplayAndStorage() {
+        for (String status : new String[] {"0", "1"}) {
+            String marker = status.equals("1") ? "X" : " ";
+            Task todo = Task.initialise("T", status, "read book");
+            Task deadline = Task.initialise("D", status, "report", "2026-09-30");
+            Task event = Task.initialise("E", status, "trip", "2026-09-01", "2026-09-03");
+            assertEquals("[T][" + marker + "] read book", todo.toString());
+            assertEquals("[D][" + marker + "] report (by: Sep 30 2026)", deadline.toString());
+            assertEquals("[E][" + marker + "] trip (from: Sep 1 2026 to: Sep 3 2026)", event.toString());
+            assertEquals("{T}{" + status + "}{read book}", todo.stringify());
+            assertEquals("{D}{" + status + "}{report}{2026-09-30}", deadline.stringify());
+            assertEquals("{E}{" + status + "}{trip}{2026-09-01}{2026-09-03}", event.stringify());
+        }
+    }
 }
