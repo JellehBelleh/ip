@@ -9,6 +9,8 @@ public class Parser {
     public static final String[] ILLEGAL_ARTIFACTS = {
         "{", "}"
     };
+    private static final String SAVE_FAILURE_WARNING = "\nWarning: Your change is available for this session, "
+            + "but it could not be saved to disk.";
 
     private final Scanner scanner;
     private final Ubis ubis;
@@ -107,8 +109,7 @@ public class Parser {
         }
         try {
             String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
             return "Invalid task number of: " + argument + "\nPlease try again!";
         }
@@ -127,8 +128,7 @@ public class Parser {
         }
         try {
             String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
             return "Invalid task number of: " + argument + "\nPlease try again!";
         }
@@ -147,8 +147,7 @@ public class Parser {
         }
         try {
             String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
             return "Invalid task number of: " + argument + "\nPlease try again!";
         }
@@ -169,8 +168,17 @@ public class Parser {
         }
 
         String response = ubis.getTaskList().addTask(initialisedTask);
-        Storage.save(ubis.getTaskList());
-        return response;
+        return saveAndAppendWarning(response);
+    }
+
+    /**
+     * Saves the current task list and adds a user-facing warning if persistence fails.
+     *
+     * @param response Successful in-memory operation response.
+     * @return Original response, with a warning appended when the save fails.
+     */
+    private String saveAndAppendWarning(String response) {
+        return Storage.save(ubis.getTaskList()) ? response : response + SAVE_FAILURE_WARNING;
     }
 
     /**
