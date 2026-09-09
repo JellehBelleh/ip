@@ -51,7 +51,7 @@ public class Parser {
             return Ui.Message.ILLEGAL_INPUT.getMessage();
         }
 
-        String[] parts = input.trim().split(" ", 2);
+        String[] parts = input.trim().split("\\s+", 2);
         String command = parts[0];
         String argument = parts.length > 1 ? parts[1] : null;
         return executeCommand(command, argument);
@@ -67,11 +67,11 @@ public class Parser {
     private String executeCommand(String command, String argument) {
         switch (command) {
             case "bye":
-                return Ui.Message.GOODBYE.getMessage();
+                return executeWithoutArgument(command, argument, Ui.Message.GOODBYE.getMessage());
             case "list":
-                return ubis.getTaskList().listTasks();
+                return executeWithoutArgument(command, argument, ubis.getTaskList().listTasks());
             case "help":
-                return Ui.Message.HELP.getMessage();
+                return executeWithoutArgument(command, argument, Ui.Message.HELP.getMessage());
             case "mark":
                 return markTask(argument);
             case "unmark":
@@ -97,6 +97,21 @@ public class Parser {
     }
 
     /**
+     * Executes a command that does not accept arguments after validating its format.
+     *
+     * @param command Command keyword used in the error response.
+     * @param argument Unexpected argument, or null when none was supplied.
+     * @param response Normal command response.
+     * @return Normal response when no argument was supplied, or a format error otherwise.
+     */
+    private String executeWithoutArgument(String command, String argument, String response) {
+        if (argument != null) {
+            return "The \"" + command + "\" command does not accept any arguments.";
+        }
+        return response;
+    }
+
+    /**
      * Marks a task after validating its task number.
      *
      * @param argument Task number argument.
@@ -107,11 +122,14 @@ public class Parser {
             return "Please add the task number you want to mark!\n"
                     + "Example: \"mark 4\" if you want to mark the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getInvalidTaskNumberMessage(argument);
         }
     }
 
@@ -126,11 +144,14 @@ public class Parser {
             return "Please add the task number you want to unmark!\n"
                     + "Example: \"unmark 4\" if you want to unmark the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getInvalidTaskNumberMessage(argument);
         }
     }
 
@@ -145,12 +166,25 @@ public class Parser {
             return "Please add the task number you want to delete!\n"
                     + "Example: \"delete 4\" if you want to delete the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
             return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getInvalidTaskNumberMessage(argument);
         }
+    }
+
+    /**
+     * Builds the shared response for a malformed or out-of-range integer representation.
+     *
+     * @param argument Invalid task number argument.
+     * @return Error response explaining the invalid value.
+     */
+    private String getInvalidTaskNumberMessage(String argument) {
+        return "Invalid task number of: " + argument + "\nPlease enter one positive whole number.";
     }
 
     /**

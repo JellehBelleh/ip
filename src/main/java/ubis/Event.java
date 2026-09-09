@@ -3,12 +3,16 @@ package ubis;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents an event task with a start date and an end date.
  */
 public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
+    private static final Pattern ARGUMENT_PATTERN = Pattern.compile(
+            "^(.+?)\\s+/from\\s+(\\S+)\\s+/to\\s+(\\S+)$");
 
     private LocalDate from;
     private LocalDate to;
@@ -26,20 +30,17 @@ public class Event extends Task {
             return null;
         }
 
-        String[] arguments = input.split(" /from | /to ");
-        if (arguments.length < 3
-                || arguments[0].isEmpty()
-                || arguments[1].isEmpty()
-                || arguments[2].isEmpty()) {
+        Matcher arguments = ARGUMENT_PATTERN.matcher(input.trim());
+        if (!arguments.matches() || arguments.group(1).isBlank()) {
             Ui.printMessage("Missing arguments, "
                     + "please do \"event task-name /from from-time /to to-time\" instead.");
             return null;
         }
 
-        this.name = arguments[0];
+        this.name = arguments.group(1).trim();
         try {
-            this.from = LocalDate.parse(arguments[1]);
-            this.to = LocalDate.parse(arguments[2]);
+            this.from = LocalDate.parse(arguments.group(2));
+            this.to = LocalDate.parse(arguments.group(3));
         } catch (DateTimeParseException e) {
             Ui.printMessage("Invalid event format, "
                     + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");

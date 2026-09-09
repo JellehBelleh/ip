@@ -25,15 +25,15 @@ public class Deadline extends Task {
             return null;
         }
 
-        String[] arguments = input.split(" /by ");
-        if (arguments.length < 2 || arguments[0].isEmpty() || arguments[1].isEmpty()) {
+        String[] arguments = input.trim().split("\\s+/by\\s+", -1);
+        if (arguments.length != 2 || arguments[0].isBlank() || arguments[1].isBlank()) {
             Ui.printMessage("Missing arguments, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
             return null;
         }
 
-        this.name = arguments[0];
+        this.name = arguments[0].trim();
         try {
-            this.deadline = LocalDate.parse(arguments[1]);
+            this.deadline = LocalDate.parse(arguments[1].trim());
         } catch (DateTimeParseException e) {
             Ui.printMessage("Invalid deadline format, "
                     + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
