@@ -13,6 +13,8 @@ public class Event extends Task {
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile(
             "^(.+?)\\s+/from\\s+(\\S+)\\s+/to\\s+(\\S+)$");
+    private static final Pattern FROM_PARAMETER_PATTERN = Pattern.compile("(?<!\\S)/from(?!\\S)");
+    private static final Pattern TO_PARAMETER_PATTERN = Pattern.compile("(?<!\\S)/to(?!\\S)");
 
     private LocalDate from;
     private LocalDate to;
@@ -30,8 +32,12 @@ public class Event extends Task {
             return null;
         }
 
-        Matcher arguments = ARGUMENT_PATTERN.matcher(input.trim());
-        if (!arguments.matches() || arguments.group(1).isBlank()) {
+        String trimmedInput = input.trim();
+        Matcher arguments = ARGUMENT_PATTERN.matcher(trimmedInput);
+        if (!occursExactlyOnce(FROM_PARAMETER_PATTERN, trimmedInput)
+                || !occursExactlyOnce(TO_PARAMETER_PATTERN, trimmedInput)
+                || !arguments.matches()
+                || arguments.group(1).isBlank()) {
             Ui.printMessage("Missing arguments, "
                     + "please do \"event task-name /from from-time /to to-time\" instead.");
             return null;
@@ -54,6 +60,18 @@ public class Event extends Task {
 
         this.type = TaskType.EVENT;
         return this;
+    }
+
+    /**
+     * Checks that a standalone command parameter occurs exactly once in the input.
+     *
+     * @param parameterPattern Pattern matching the standalone parameter.
+     * @param input Event arguments to inspect.
+     * @return True if the parameter occurs exactly once.
+     */
+    private static boolean occursExactlyOnce(Pattern parameterPattern, String input) {
+        Matcher matcher = parameterPattern.matcher(input);
+        return matcher.find() && !matcher.find();
     }
 
     @Override
