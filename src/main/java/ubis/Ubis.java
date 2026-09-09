@@ -11,8 +11,17 @@ public class Ubis {
      * Constructs a new Ubis chatbot instance and loads saved tasks from storage.
      */
     public Ubis() {
+        this(Storage.load());
+    }
+
+    /**
+     * Constructs a Ubis instance with a supplied task list for isolated testing.
+     *
+     * @param taskList Initial task list.
+     */
+    Ubis(TaskList taskList) {
+        this.taskList = taskList;
         this.parser = new Parser(this);
-        this.taskList = Storage.load();
     }
 
     /**

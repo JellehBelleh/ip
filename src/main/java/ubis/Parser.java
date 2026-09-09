@@ -21,8 +21,18 @@ public class Parser {
      * @param ubis Chatbot instance to control.
      */
     public Parser(Ubis ubis) {
+        this(ubis, new Scanner(System.in));
+    }
+
+    /**
+     * Constructs a Parser with a supplied scanner for isolated input-stream testing.
+     *
+     * @param ubis Chatbot instance to control.
+     * @param scanner Input scanner used to receive console commands.
+     */
+    Parser(Ubis ubis, Scanner scanner) {
         this.ubis = ubis;
-        this.scanner = new Scanner(System.in);
+        this.scanner = scanner;
     }
 
     /**

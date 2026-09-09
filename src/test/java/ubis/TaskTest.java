@@ -43,4 +43,22 @@ public class TaskTest {
     public void initialise_invalidSymbol_returnsNull() {
         assertNull(Task.initialise("X", "0", "unknown task"));
     }
+
+    @Test
+    public void initialise_invalidStatus_returnsNull() {
+        assertNull(Task.initialise("T", "done", "read book"));
+        assertNull(Task.initialise("T", "2", "read book"));
+    }
+
+    @Test
+    public void initialise_blankName_returnsNull() {
+        assertNull(Task.initialise("T", "0", "   "));
+    }
+
+    @Test
+    public void initialise_unexpectedExtraFields_returnsNull() {
+        assertNull(Task.initialise("T", "0", "read book", "unexpected"));
+        assertNull(Task.initialise("D", "0", "submit", "2026-09-01", "unexpected"));
+        assertNull(Task.initialise("E", "0", "trip", "2026-09-01", "2026-09-03", "unexpected"));
+    }
 }
