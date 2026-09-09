@@ -229,7 +229,7 @@ public class Parser {
      * @return Original response, with a warning appended when the save fails.
      */
     private String saveAndAppendWarning(String response) {
-        return Storage.save(ubis.getTaskList()) ? response : response + SAVE_FAILURE_WARNING;
+        return ubis.saveTasks() ? response : response + SAVE_FAILURE_WARNING;
     }
 
     /**

@@ -1,5 +1,7 @@
 package ubis;
 
+import java.nio.file.Path;
+
 /**
  * Entry point of the Ubis chatbot application, coordinating storage, user interface, and command parsing.
  */
@@ -8,41 +10,57 @@ public class Ubis {
     private Parser parser;
     private String startupWarning;
 
+    private final Path savePath;
+
     /**
      * Constructs a new Ubis chatbot instance and loads saved tasks from storage.
      */
     public Ubis() {
-        this(Storage.loadWithReport());
+        this(Storage.SAVE_PATH);
     }
 
     /**
-     * Constructs a Ubis instance from a storage load result.
+     * Loads and saves tasks at the supplied path, allowing isolated application tests.
      *
-     * @param loadResult Loaded tasks and any startup warning.
+     * @param savePath Task data file to use for this session.
      */
-    private Ubis(Storage.LoadResult loadResult) {
-        this(loadResult.getTaskList(), loadResult.getWarning());
+    Ubis(Path savePath) {
+        this(Storage.loadWithReport(savePath), savePath);
     }
 
     /**
-     * Constructs a Ubis instance with a supplied task list for isolated testing.
+     * Constructs a chatbot from loaded tasks and their startup warning.
+     */
+    private Ubis(Storage.LoadResult loadResult, Path savePath) {
+        this(loadResult.getTaskList(), savePath);
+        this.startupWarning = loadResult.getWarning();
+    }
+
+    /**
+     * Constructs a Ubis instance with a supplied task list.
      *
      * @param taskList Initial task list.
      */
     Ubis(TaskList taskList) {
-        this(taskList, null);
+        this(taskList, Storage.SAVE_PATH);
     }
 
     /**
-     * Constructs a Ubis instance with supplied tasks and startup warning.
-     *
-     * @param taskList Initial task list.
-     * @param startupWarning Warning to show when the application starts, or null.
+     * Constructs a chatbot with supplied tasks and an isolated save destination.
      */
-    private Ubis(TaskList taskList, String startupWarning) {
+    Ubis(TaskList taskList, Path savePath) {
         this.taskList = taskList;
-        this.startupWarning = startupWarning;
+        this.savePath = savePath;
         this.parser = new Parser(this);
+    }
+
+    /**
+     * Persists this session's tasks to the same path used to load them.
+     *
+     * @return True when the task list was saved successfully.
+     */
+    boolean saveTasks() {
+        return Storage.save(taskList, savePath);
     }
 
     /**
