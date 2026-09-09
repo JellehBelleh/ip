@@ -15,6 +15,27 @@ import java.util.regex.Pattern;
  * Handles saving and loading task data to and from the local storage file.
  */
 public class Storage {
+    /**
+     * Contains tasks loaded from storage and an optional user-facing warning.
+     */
+    static class LoadResult {
+        private final TaskList taskList;
+        private final String warning;
+
+        LoadResult(TaskList taskList, String warning) {
+            this.taskList = taskList;
+            this.warning = warning;
+        }
+
+        TaskList getTaskList() {
+            return taskList;
+        }
+
+        String getWarning() {
+            return warning;
+        }
+    }
+
     private static final Path SAVE_PATH = Paths.get("data", "data.txt");
     private static final Pattern STORAGE_FIELD_PATTERN = Pattern.compile("\\{([^{}]*)}");
 
@@ -84,7 +105,7 @@ public class Storage {
      * @return Task list loaded from storage, or an empty task list if loading fails.
      */
     public static TaskList load() {
-        return load(SAVE_PATH);
+        return loadWithReport().getTaskList();
     }
 
     /**
@@ -94,28 +115,57 @@ public class Storage {
      * @return Task list loaded from storage, or an empty task list if loading fails.
      */
     static TaskList load(Path savePath) {
+        return loadWithReport(savePath).getTaskList();
+    }
+
+    /**
+     * Loads tasks and returns any warning that should be shown when the application starts.
+     *
+     * @return Loaded tasks and an optional user-facing warning.
+     */
+    static LoadResult loadWithReport() {
+        return loadWithReport(SAVE_PATH);
+    }
+
+    /**
+     * Loads tasks and records a user-facing warning for inaccessible or malformed data.
+     *
+     * @param savePath File to load tasks from.
+     * @return Loaded tasks and an optional user-facing warning.
+     */
+    static LoadResult loadWithReport(Path savePath) {
         TaskList tasks = new TaskList();
 
         if (!verifyAndCreatePath(savePath)) {
             System.out.println("Failed to verify or create path. Aborting load.");
-            return tasks;
+            return new LoadResult(tasks, "Ubis could not access the task data file. "
+                    + "It started with an empty task list.");
         }
 
         try {
             List<String> lines = Files.readAllLines(savePath);
+            int malformedRecordCount = 0;
 
             for (int index = 0; index < lines.size(); index++) {
                 Task task = parseStoredTask(lines.get(index), index + 1);
                 if (task != null) {
                     tasks.addTask(task, false);
+                } else {
+                    malformedRecordCount++;
                 }
+            }
+            if (malformedRecordCount > 0) {
+                String recordDescription = malformedRecordCount == 1 ? "record" : "records";
+                return new LoadResult(tasks, "Ubis skipped " + malformedRecordCount
+                        + " invalid saved task " + recordDescription + ". Valid tasks were loaded normally.");
             }
         } catch (IOException | SecurityException e) {
             System.out.println("Error reading file: " + e);
-            return tasks;
+            return new LoadResult(tasks, "Ubis could not read the task data file. "
+                    + "It started with an empty task list.");
         }
 
-        return tasks;
+        return new LoadResult(tasks, null);
     }
 
     /**

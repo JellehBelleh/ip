@@ -57,6 +57,29 @@ public class StorageTest {
     }
 
     @Test
+    public void loadWithReport_malformedRecords_returnsSpecificWarning() throws IOException {
+        Path savePath = temporaryDirectory.resolve("data.txt");
+        Files.writeString(savePath, "{T}{0}{read book}\n{T}{invalid}{broken task}\n");
+
+        Storage.LoadResult result = Storage.loadWithReport(savePath);
+
+        assertEquals("{T}{0}{read book}\n", result.getTaskList().toString());
+        assertEquals("Ubis skipped 1 invalid saved task record. Valid tasks were loaded normally.",
+                result.getWarning());
+    }
+
+    @Test
+    public void loadWithReport_inaccessiblePath_returnsSpecificWarning() throws IOException {
+        Path parentFile = temporaryDirectory.resolve("not-a-directory");
+        Files.writeString(parentFile, "content");
+
+        Storage.LoadResult result = Storage.loadWithReport(parentFile.resolve("data.txt"));
+
+        assertEquals("Ubis could not access the task data file. It started with an empty task list.",
+                result.getWarning());
+    }
+
+    @Test
     public void save_pathIsDirectory_returnsFalseWithoutDeletingDirectory() throws IOException {
         Path invalidSavePath = Files.createDirectory(temporaryDirectory.resolve("data.txt"));
 

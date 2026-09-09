@@ -6,12 +6,22 @@ package ubis;
 public class Ubis {
     private TaskList taskList;
     private Parser parser;
+    private String startupWarning;
 
     /**
      * Constructs a new Ubis chatbot instance and loads saved tasks from storage.
      */
     public Ubis() {
-        this(Storage.load());
+        this(Storage.loadWithReport());
+    }
+
+    /**
+     * Constructs a Ubis instance from a storage load result.
+     *
+     * @param loadResult Loaded tasks and any startup warning.
+     */
+    private Ubis(Storage.LoadResult loadResult) {
+        this(loadResult.getTaskList(), loadResult.getWarning());
     }
 
     /**
@@ -20,7 +30,18 @@ public class Ubis {
      * @param taskList Initial task list.
      */
     Ubis(TaskList taskList) {
+        this(taskList, null);
+    }
+
+    /**
+     * Constructs a Ubis instance with supplied tasks and startup warning.
+     *
+     * @param taskList Initial task list.
+     * @param startupWarning Warning to show when the application starts, or null.
+     */
+    private Ubis(TaskList taskList, String startupWarning) {
         this.taskList = taskList;
+        this.startupWarning = startupWarning;
         this.parser = new Parser(this);
     }
 
@@ -55,6 +76,9 @@ public class Ubis {
      */
     private void welcome() {
         Ui.welcome();
+        if (startupWarning != null) {
+            Ui.printMessage(startupWarning);
+        }
 
         // Keep handling commands. Exits when user inputs "bye"
         while (true) {
@@ -78,6 +102,15 @@ public class Ubis {
      */
     public TaskList getTaskList() {
         return this.taskList;
+    }
+
+    /**
+     * Returns the warning generated while loading saved tasks.
+     *
+     * @return Startup warning, or null when storage loaded normally.
+     */
+    public String getStartupWarning() {
+        return startupWarning;
     }
 
     /**

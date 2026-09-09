@@ -117,6 +117,9 @@ public class Main extends Application {
      */
     private void showWelcomeMessage() {
         dialogContainer.getChildren().add(DialogBox.getUbisDialog(Ui.getWelcomeMessage()));
+        if (ubis.getStartupWarning() != null) {
+            dialogContainer.getChildren().add(DialogBox.getUbisDialog(ubis.getStartupWarning()));
+        }
     }
 
     /**
