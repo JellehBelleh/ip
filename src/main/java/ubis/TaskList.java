@@ -145,16 +145,17 @@ public class TaskList {
      * @return Formatted list of matching tasks.
      */
     public String find(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
+        if (keyword == null || keyword.isBlank()) {
             return "Missing parameter for \"find\", do \"find name\" instead.";
         }
 
+        String trimmedKeyword = keyword.trim();
         List<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {
             // Invariant: all tasks stored in the list must be non-null
             assert task != null : "Task in tasks should not be null";
 
-            if (task.getName().contains(keyword)) {
+            if (task.getName().contains(trimmedKeyword)) {
                 matchingTasks.add(task);
             }
         }
