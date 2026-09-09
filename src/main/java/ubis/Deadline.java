@@ -3,12 +3,15 @@ package ubis;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents a task that has a deadline date.
  */
 public class Deadline extends Task {
     private static final DateTimeFormatter OUTPUT_FORMATTER = DateTimeFormatter.ofPattern("MMM d yyyy");
+    private static final Pattern BY_PARAMETER_PATTERN = Pattern.compile("(?<!\\S)/by(?!\\S)");
 
     private LocalDate deadline;
 
@@ -20,23 +23,44 @@ public class Deadline extends Task {
      */
     @Override
     public Task initialise(String input) {
-        if (input == null) {
-            Ui.printMessage("Missing arguments, please do \"deadline task-name /by deadline-of-task\" instead.");
+        if (input == null || input.isBlank()) {
+            setInitialisationError("Please provide a task name and deadline.\n"
+                    + "Example: deadline submit report /by 2026-09-30");
             return null;
         }
 
-        String[] arguments = input.split(" /by ");
-        if (arguments.length < 2 || arguments[0].isEmpty() || arguments[1].isEmpty()) {
-            Ui.printMessage("Missing arguments, please do \"deadline task-name /by YYYY-MM-DD\" instead.");
+        String trimmedInput = input.trim();
+        Matcher byParameter = BY_PARAMETER_PATTERN.matcher(trimmedInput);
+        if (!byParameter.find()) {
+            setInitialisationError("A deadline needs a \"/by\" parameter followed by its date.\n"
+                    + "Example: deadline submit report /by 2026-09-30");
             return null;
         }
 
-        this.name = arguments[0];
+        int parameterStart = byParameter.start();
+        int parameterEnd = byParameter.end();
+        if (byParameter.find()) {
+            setInitialisationError("A deadline must contain exactly one \"/by\" parameter.");
+            return null;
+        }
+
+        String taskName = trimmedInput.substring(0, parameterStart).trim();
+        String dateText = trimmedInput.substring(parameterEnd).trim();
+        if (taskName.isBlank()) {
+            setInitialisationError("Please provide a task name before \"/by\".");
+            return null;
+        }
+        if (dateText.isBlank()) {
+            setInitialisationError("Please provide a deadline date after \"/by\" in YYYY-MM-DD format.");
+            return null;
+        }
+
+        this.name = taskName;
         try {
-            this.deadline = LocalDate.parse(arguments[1]);
+            this.deadline = LocalDate.parse(dateText);
         } catch (DateTimeParseException e) {
-            Ui.printMessage("Invalid deadline format, "
-                    + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
+            setInitialisationError("The deadline date is invalid. "
+                    + "Use YYYY-MM-DD and enter a real calendar date.");
             return null;
         }
 

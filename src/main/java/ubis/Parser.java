@@ -9,6 +9,8 @@ public class Parser {
     public static final String[] ILLEGAL_ARTIFACTS = {
         "{", "}"
     };
+    private static final String SAVE_FAILURE_WARNING = "\nWarning: Your change is available for this session, "
+            + "but it could not be saved to disk.";
 
     private final Scanner scanner;
     private final Ubis ubis;
@@ -19,8 +21,18 @@ public class Parser {
      * @param ubis Chatbot instance to control.
      */
     public Parser(Ubis ubis) {
+        this(ubis, new Scanner(System.in));
+    }
+
+    /**
+     * Constructs a Parser with a supplied scanner for isolated input-stream testing.
+     *
+     * @param ubis Chatbot instance to control.
+     * @param scanner Input scanner used to receive console commands.
+     */
+    Parser(Ubis ubis, Scanner scanner) {
         this.ubis = ubis;
-        this.scanner = new Scanner(System.in);
+        this.scanner = scanner;
     }
 
     /**
@@ -29,6 +41,9 @@ public class Parser {
      * @return User input command string.
      */
     public String receiveInput() {
+        if (!scanner.hasNextLine()) {
+            return null;
+        }
         String command = scanner.nextLine();
         Ui.printDashLine();
         return command;
@@ -49,7 +64,7 @@ public class Parser {
             return Ui.Message.ILLEGAL_INPUT.getMessage();
         }
 
-        String[] parts = input.trim().split(" ", 2);
+        String[] parts = input.trim().split("\\s+", 2);
         String command = parts[0];
         String argument = parts.length > 1 ? parts[1] : null;
         return executeCommand(command, argument);
@@ -65,11 +80,11 @@ public class Parser {
     private String executeCommand(String command, String argument) {
         switch (command) {
             case "bye":
-                return Ui.Message.GOODBYE.getMessage();
+                return executeWithoutArgument(command, argument, Ui.Message.GOODBYE.getMessage());
             case "list":
-                return ubis.getTaskList().listTasks();
+                return executeWithoutArgument(command, argument, ubis.getTaskList().listTasks());
             case "help":
-                return Ui.Message.HELP.getMessage();
+                return executeWithoutArgument(command, argument, Ui.Message.HELP.getMessage());
             case "mark":
                 return markTask(argument);
             case "unmark":
@@ -77,21 +92,31 @@ public class Parser {
             case "delete":
                 return deleteTask(argument);
             case "todo":
-                return addTask(new Todo(), argument,
-                        "Missing task name, please do \"todo task-name\" instead.");
+                return addTask(new Todo(), argument);
             case "deadline":
-                return addTask(new Deadline(), argument,
-                        "Missing or invalid arguments, "
-                                + "please do \"deadline task-name /by YYYY-MM-DD\" instead.");
+                return addTask(new Deadline(), argument);
             case "event":
-                return addTask(new Event(), argument,
-                        "Missing or invalid arguments, "
-                                + "please do \"event task-name /from YYYY-MM-DD /to YYYY-MM-DD\" instead.");
+                return addTask(new Event(), argument);
             case "find":
                 return ubis.getTaskList().find(argument);
             default:
                 return "Unknown command \"" + command + "\". Type \"help\" for commands!";
         }
+    }
+
+    /**
+     * Executes a command that does not accept arguments after validating its format.
+     *
+     * @param command Command keyword used in the error response.
+     * @param argument Unexpected argument, or null when none was supplied.
+     * @param response Normal command response.
+     * @return Normal response when no argument was supplied, or a format error otherwise.
+     */
+    private String executeWithoutArgument(String command, String argument, String response) {
+        if (argument != null) {
+            return "The \"" + command + "\" command does not accept any arguments.";
+        }
+        return response;
     }
 
     /**
@@ -105,12 +130,14 @@ public class Parser {
             return "Please add the task number you want to mark!\n"
                     + "Example: \"mark 4\" if you want to mark the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getTaskNumberTooLargeMessage();
         }
     }
 
@@ -125,12 +152,14 @@ public class Parser {
             return "Please add the task number you want to unmark!\n"
                     + "Example: \"unmark 4\" if you want to unmark the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getTaskNumberTooLargeMessage();
         }
     }
 
@@ -145,13 +174,34 @@ public class Parser {
             return "Please add the task number you want to delete!\n"
                     + "Example: \"delete 4\" if you want to delete the fourth task.";
         }
+        if (!argument.matches("[0-9]+")) {
+            return getInvalidTaskNumberMessage(argument);
+        }
         try {
             String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
-            Storage.save(ubis.getTaskList());
-            return response;
+            return saveAndAppendWarning(response);
         } catch (NumberFormatException e) {
-            return "Invalid task number of: " + argument + "\nPlease try again!";
+            return getTaskNumberTooLargeMessage();
         }
+    }
+
+    /**
+     * Builds the shared response for a malformed or out-of-range integer representation.
+     *
+     * @param argument Invalid task number argument.
+     * @return Error response explaining the invalid value.
+     */
+    private String getInvalidTaskNumberMessage(String argument) {
+        return "\"" + argument + "\" is not a valid task number. Please enter one positive whole number.";
+    }
+
+    /**
+     * Returns a specific response when a numeric task number is too large for the application.
+     *
+     * @return Error response for an integer overflow.
+     */
+    private String getTaskNumberTooLargeMessage() {
+        return "That task number is too large. Please enter a task number shown by \"list\".";
     }
 
     /**
@@ -159,18 +209,27 @@ public class Parser {
      *
      * @param task Task object used to initialise the requested task type.
      * @param argument Task creation argument.
-     * @param invalidMessage Response returned when the argument is invalid.
      * @return Response string generated for the command.
      */
-    private String addTask(Task task, String argument, String invalidMessage) {
+    private String addTask(Task task, String argument) {
         Task initialisedTask = task.initialise(argument);
         if (initialisedTask == null) {
-            return invalidMessage;
+            String errorMessage = task.getInitialisationError();
+            return errorMessage == null ? "The task details are invalid. Please try again." : errorMessage;
         }
 
         String response = ubis.getTaskList().addTask(initialisedTask);
-        Storage.save(ubis.getTaskList());
-        return response;
+        return saveAndAppendWarning(response);
+    }
+
+    /**
+     * Saves the current task list and adds a user-facing warning if persistence fails.
+     *
+     * @param response Successful in-memory operation response.
+     * @return Original response, with a warning appended when the save fails.
+     */
+    private String saveAndAppendWarning(String response) {
+        return Storage.save(ubis.getTaskList()) ? response : response + SAVE_FAILURE_WARNING;
     }
 
     /**

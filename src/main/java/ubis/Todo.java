@@ -13,14 +13,14 @@ public class Todo extends Task {
      */
     @Override
     public Task initialise(String input) {
-        if (input == null || input.isEmpty()) {
-            Ui.printMessage("Missing task name, please do \"todo task-name\" instead.");
+        if (input == null || input.isBlank()) {
+            setInitialisationError("Please provide a name for the todo.\n"
+                    + "Example: todo read a book");
         } else {
-            this.name = input;
+            this.name = input.trim();
             this.type = TaskType.TODO;
             return this;
         }
         return null;
     }
 }
-

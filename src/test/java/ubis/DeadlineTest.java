@@ -17,6 +17,23 @@ public class DeadlineTest {
     }
 
     @Test
+    public void initialise_nonExistentDate_returnsNull() {
+        assertNull(new Deadline().initialise("submit report /by 2026-02-30"));
+    }
+
+    @Test
+    public void initialise_repeatedOrTrailingParameter_returnsNull() {
+        assertNull(new Deadline().initialise("submit report /by 2026-09-01 /by 2026-09-02"));
+        assertNull(new Deadline().initialise("submit report /by 2026-09-01 unexpected"));
+    }
+
+    @Test
+    public void initialise_multipleSpaces_trimsAndAcceptsDeadline() {
+        Task deadline = new Deadline().initialise("  submit report   /by   2026-09-01  ");
+        assertEquals("{D}{0}{submit report}{2026-09-01}", deadline.stringify());
+    }
+
+    @Test
     public void initialise_validDate_returnsDeadline() {
         assertNotEquals(null, new Deadline().initialise("submit report /by 2026-09-01"));
     }

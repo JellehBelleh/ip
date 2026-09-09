@@ -6,13 +6,43 @@ package ubis;
 public class Ubis {
     private TaskList taskList;
     private Parser parser;
+    private String startupWarning;
 
     /**
      * Constructs a new Ubis chatbot instance and loads saved tasks from storage.
      */
     public Ubis() {
+        this(Storage.loadWithReport());
+    }
+
+    /**
+     * Constructs a Ubis instance from a storage load result.
+     *
+     * @param loadResult Loaded tasks and any startup warning.
+     */
+    private Ubis(Storage.LoadResult loadResult) {
+        this(loadResult.getTaskList(), loadResult.getWarning());
+    }
+
+    /**
+     * Constructs a Ubis instance with a supplied task list for isolated testing.
+     *
+     * @param taskList Initial task list.
+     */
+    Ubis(TaskList taskList) {
+        this(taskList, null);
+    }
+
+    /**
+     * Constructs a Ubis instance with supplied tasks and startup warning.
+     *
+     * @param taskList Initial task list.
+     * @param startupWarning Warning to show when the application starts, or null.
+     */
+    private Ubis(TaskList taskList, String startupWarning) {
+        this.taskList = taskList;
+        this.startupWarning = startupWarning;
         this.parser = new Parser(this);
-        this.taskList = Storage.load();
     }
 
     /**
@@ -32,7 +62,13 @@ public class Ubis {
      * @return Chatbot response string.
      */
     public String getResponse(String input) {
-        return parser.handleInput(input);
+        try {
+            return parser.handleInput(input);
+        } catch (RuntimeException e) {
+            System.err.println("Unexpected error while processing a command:");
+            e.printStackTrace();
+            return Ui.Message.UNEXPECTED_ERROR.getMessage();
+        }
     }
 
     /**
@@ -40,10 +76,17 @@ public class Ubis {
      */
     private void welcome() {
         Ui.welcome();
+        if (startupWarning != null) {
+            Ui.printMessage(startupWarning);
+        }
 
         // Keep handling commands. Exits when user inputs "bye"
         while (true) {
             String input = parser.receiveInput();
+            if (input == null) {
+                exit();
+                return;
+            }
             String response = getResponse(input);
             Ui.printMessage(response);
             if ("bye".equalsIgnoreCase(input.trim())) {
@@ -62,6 +105,15 @@ public class Ubis {
     }
 
     /**
+     * Returns the warning generated while loading saved tasks.
+     *
+     * @return Startup warning, or null when storage loaded normally.
+     */
+    public String getStartupWarning() {
+        return startupWarning;
+    }
+
+    /**
      * Cleans up resources, prints a goodbye message, and terminates the application.
      */
     public void exit() {
@@ -70,4 +122,3 @@ public class Ubis {
         System.exit(0);
     }
 }
-
