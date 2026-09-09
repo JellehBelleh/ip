@@ -17,6 +17,8 @@ public class Ui {
                 + "type \"help\" for information on commands."),
         ILLEGAL_INPUT("Sorry! Please ensure input does not contain any of the following characters: \n"
                 + Arrays.toString(Parser.ILLEGAL_ARTIFACTS)),
+        UNEXPECTED_ERROR("Sorry, Ubis encountered an unexpected error while processing your command. "
+                + "Please try again; diagnostic details have been logged."),
         HELP("Here are Ubis's commands:\n"
                 + "Replace values inside <angle brackets> with your own values.\n\n"
                 + "CREATE TASKS\n"

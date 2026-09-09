@@ -32,7 +32,13 @@ public class Ubis {
      * @return Chatbot response string.
      */
     public String getResponse(String input) {
-        return parser.handleInput(input);
+        try {
+            return parser.handleInput(input);
+        } catch (RuntimeException e) {
+            System.err.println("Unexpected error while processing a command:");
+            e.printStackTrace();
+            return Ui.Message.UNEXPECTED_ERROR.getMessage();
+        }
     }
 
     /**
@@ -44,6 +50,10 @@ public class Ubis {
         // Keep handling commands. Exits when user inputs "bye"
         while (true) {
             String input = parser.receiveInput();
+            if (input == null) {
+                exit();
+                return;
+            }
             String response = getResponse(input);
             Ui.printMessage(response);
             if ("bye".equalsIgnoreCase(input.trim())) {
@@ -70,4 +80,3 @@ public class Ubis {
         System.exit(0);
     }
 }
-

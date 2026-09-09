@@ -31,6 +31,9 @@ public class Parser {
      * @return User input command string.
      */
     public String receiveInput() {
+        if (!scanner.hasNextLine()) {
+            return null;
+        }
         String command = scanner.nextLine();
         Ui.printDashLine();
         return command;
