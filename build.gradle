@@ -78,6 +78,7 @@ jacoco {
 
 jacocoTestReport {
     dependsOn test
+    executionData fileTree(layout.buildDirectory.dir('jacoco')) { include '*.exec' }
     reports {
         html.required = true
         xml.required = true
@@ -90,5 +91,9 @@ jacocoTestReport {
 test {
     finalizedBy jacocoTestReport
     // Child processes use the application classpath to test console exit safely.
-    systemProperty 'ubis.test.classpath', sourceSets.main.runtimeClasspath.asPath
+    systemProperty 'ubis.test.classpath', sourceSets.test.runtimeClasspath.asPath
+    systemProperty 'ubis.test.coverage.path', layout.buildDirectory.file('jacoco/console.exec').get().asFile
+    doFirst {
+        delete layout.buildDirectory.file('jacoco/console.exec')
+    }
 }

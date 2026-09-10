@@ -106,10 +106,11 @@ public class Ubis {
                 return;
             }
             String response = getResponse(input);
-            Ui.printMessage(response);
-            if ("bye".equalsIgnoreCase(input.trim())) {
+            if ("bye".equals(input.trim())) {
                 exit();
+                return;
             }
+            Ui.printMessage(response);
         }
     }
 
