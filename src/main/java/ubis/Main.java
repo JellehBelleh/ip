@@ -140,7 +140,7 @@ public class Main extends Application {
         );
         userInput.clear();
 
-        if ("bye".equalsIgnoreCase(input.trim())) {
+        if ("bye".equals(input.trim())) {
             Platform.exit();
         }
     }

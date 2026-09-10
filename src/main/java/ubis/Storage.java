@@ -36,7 +36,7 @@ public class Storage {
         }
     }
 
-    private static final Path SAVE_PATH = Paths.get("data", "data.txt");
+    static final Path SAVE_PATH = Paths.get("data", "data.txt");
     private static final Pattern STORAGE_FIELD_PATTERN = Pattern.compile("\\{([^{}]*)}");
 
     /**
