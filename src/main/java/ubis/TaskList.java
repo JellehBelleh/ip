@@ -85,7 +85,7 @@ public class TaskList {
 
         IntStream.range(1, tasksToDisplay.size() + 1)
                 .forEach(index -> {
-                    if (index > 0) {
+                    if (index > 1) {
                         sb.append("\n");
                     }
 

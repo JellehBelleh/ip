@@ -50,7 +50,8 @@ public class DialogBox extends HBox {
         DialogBox db = new DialogBox(text);
         db.setAlignment(Pos.TOP_RIGHT);
         db.text.setStyle("-fx-background-color: #DCF8C6; -fx-padding: 8px 12px; "
-                + "-fx-background-radius: 12px; -fx-font-size: 13px;");
+                + "-fx-background-radius: 12px; -fx-border-color: #A3C58D; -fx-border-radius: 12px; "
+                + "-fx-border-width: 1px; -fx-font-size: 13px;");
         return db;
     }
 
@@ -63,8 +64,9 @@ public class DialogBox extends HBox {
     public static DialogBox getUbisDialog(String text) {
         DialogBox db = new DialogBox(text);
         db.flip();
-        db.text.setStyle("-fx-background-color: #EFEFEF; -fx-padding: 8px 12px; "
-                + "-fx-background-radius: 12px; -fx-font-size: 13px;");
+        db.text.setStyle("-fx-background-color: #DCEAF7; -fx-text-fill: #20364D; -fx-padding: 8px 12px; "
+                + "-fx-background-radius: 12px; -fx-border-color: #9FBBD5; -fx-border-radius: 12px; "
+                + "-fx-border-width: 1px; -fx-font-size: 13px;");
         return db;
     }
 }

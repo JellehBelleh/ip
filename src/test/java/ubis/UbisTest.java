@@ -28,7 +28,7 @@ public class UbisTest {
         assertEquals("added: [D][ ] report (by: Sep 30 2026)",
                 ubis.getResponse("deadline report /by 2026-09-30"));
         assertEquals("Nice! I've marked this task as DONE:\n  [T][X] read book", ubis.getResponse("mark 1"));
-        assertEquals("\n1: [T][X] read book", ubis.getResponse("find book"));
+        assertEquals("1: [T][X] read book", ubis.getResponse("find book"));
         assertEquals("Okay, I've deleted [D][ ] report (by: Sep 30 2026)", ubis.getResponse("delete 2"));
         assertEquals("{T}{1}{read book}\n", new Ubis(savePath).getTaskList().toString());
         assertEquals("Okay, I've marked this task NOT done yet:\n  [T][ ] read book",
@@ -53,7 +53,7 @@ public class UbisTest {
         Ubis ubis = new Ubis(savePath);
         assertEquals("Ubis skipped 1 invalid saved task record. Valid tasks were loaded normally.",
                 ubis.getStartupWarning());
-        assertEquals("\n1: [T][X] read book", ubis.getResponse("list"));
+        assertEquals("1: [T][X] read book", ubis.getResponse("list"));
     }
 
     @Test

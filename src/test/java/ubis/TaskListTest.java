@@ -43,7 +43,7 @@ public class TaskListTest {
         tasks.addTask(new Deadline().initialise("report /by 2026-09-30"), false);
         tasks.addTask(new Event().initialise("trip /from 2026-09-01 /to 2026-09-03"), true);
         tasks.addTask(null, false);
-        assertEquals("\n1: [T][ ] read book\n2: [D][ ] report (by: Sep 30 2026)"
+        assertEquals("1: [T][ ] read book\n2: [D][ ] report (by: Sep 30 2026)"
                 + "\n3: [E][ ] trip (from: Sep 1 2026 to: Sep 3 2026)", tasks.listTasks());
         assertEquals("{T}{0}{read book}\n{D}{0}{report}{2026-09-30}\n"
                 + "{E}{0}{trip}{2026-09-01}{2026-09-03}\n", tasks.toString());
@@ -61,7 +61,7 @@ public class TaskListTest {
                 expected.append("\n").append(displayNumber++).append(": [T][ ] task ").append(originalNumber);
             }
         }
-        assertEquals(expected.toString(), tasks.listTasks());
+        assertEquals(expected.toString().stripLeading(), tasks.listTasks());
         tasks.removeTask(1);
         tasks.removeTask(1);
         assertEquals("No tasks to show", tasks.listTasks());
@@ -103,8 +103,8 @@ public class TaskListTest {
         tasks.addTask(new Todo().initialise("buy bookshelf"));
         tasks.markTask(3);
         String before = tasks.toString();
-        assertEquals("\n1: [T][ ] read book\n2: [T][X] buy bookshelf", tasks.find("  book\t"));
-        assertEquals("\n1: [T][ ] Book tickets", tasks.find("Book"));
+        assertEquals("1: [T][ ] read book\n2: [T][X] buy bookshelf", tasks.find("  book\t"));
+        assertEquals("1: [T][ ] Book tickets", tasks.find("Book"));
         assertEquals("No matching tasks found.", tasks.find("BOOK"));
         assertEquals("Please provide a keyword to find.\nExample: find book", tasks.find(null));
         assertEquals(before, tasks.toString());

@@ -67,7 +67,7 @@ public class ConsoleTest {
     @Test
     public void storage_defaultAndBarePaths_roundTripsInIsolatedDirectory() throws Exception {
         String output = runProcess("", "ubis.StorageProcess");
-        assertEquals("true\n{T}{0}{default task}\nnull\n\n1: [T][ ] default task\n"
+        assertEquals("true\n{T}{0}{default task}\nnull\n1: [T][ ] default task\n"
                 + "true\n{T}{0}{default task}\n", output);
         assertEquals("{T}{0}{default task}\n", Files.readString(temporaryDirectory.resolve("data/data.txt")));
         assertEquals("{T}{0}{default task}\n", Files.readString(temporaryDirectory.resolve("bare.txt")));

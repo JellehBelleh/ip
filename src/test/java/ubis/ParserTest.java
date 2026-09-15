@@ -199,7 +199,7 @@ public class ParserTest {
                 ubis.getResponse("event trip /from 2026-09-01 /to 2026-09-03"));
         assertEquals("Nice! I've marked this task as DONE:\n  [T][X] read book", ubis.getResponse("mark 01"));
         assertEquals("{T}{1}{read book}\n{E}{0}{trip}{2026-09-01}{2026-09-03}\n", Files.readString(savePath));
-        assertEquals("\n1: [T][X] read book", ubis.getResponse("find read book"));
+        assertEquals("1: [T][X] read book", ubis.getResponse("find read book"));
     }
 
     @ParameterizedTest
