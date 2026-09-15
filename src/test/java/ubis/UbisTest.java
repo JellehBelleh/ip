@@ -77,4 +77,22 @@ public class UbisTest {
         assertEquals("No tasks to show", second.getResponse("list"));
         assertEquals("{T}{0}{first}\n", Storage.load(firstPath).toString());
     }
+
+    @Test
+    public void getResponse_searchNumbers_targetOriginalTasksAcrossSessions() throws Exception {
+        Path savePath = temporaryDirectory.resolve("search.txt");
+        Ubis ubis = new Ubis(savePath);
+        ubis.getResponse("todo pay rent");
+        ubis.getResponse("todo read book");
+        ubis.getResponse("todo buy book");
+        assertEquals("2: [T][ ] read book\n3: [T][ ] buy book", ubis.getResponse("find book"));
+        ubis.getResponse("mark 2");
+        assertEquals("2: [T][X] read book\n3: [T][ ] buy book", ubis.getResponse("find book"));
+        ubis.getResponse("unmark 2");
+        ubis.getResponse("delete 3");
+        assertEquals("1: [T][ ] pay rent\n2: [T][ ] read book", new Ubis(savePath).getResponse("list"));
+        ubis.getResponse("delete 1");
+        assertEquals("1: [T][ ] read book", ubis.getResponse("find book"));
+    }
+
 }

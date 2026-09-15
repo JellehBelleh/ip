@@ -2,7 +2,6 @@ package ubis;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * Manages an in-memory list of tasks and supports operations such as adding, deleting, marking, and finding tasks.
@@ -67,35 +66,25 @@ public class TaskList {
      * @return String representation of all tasks.
      */
     public String listTasks() {
-        return listTasks(tasks);
-    }
-
-    /**
-     * Formats the provided list of tasks into a numbered string.
-     *
-     * @param tasksToDisplay List of tasks to format.
-     * @return Formatted string of tasks.
-     */
-    private String listTasks(List<Task> tasksToDisplay) {
-        if (tasksToDisplay.isEmpty()) {
+        if (tasks.isEmpty()) {
             return "No tasks to show";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder result = new StringBuilder();
+        for (int index = 0; index < tasks.size(); index++) {
+            appendTask(result, index);
+        }
+        return result.toString();
+    }
 
-        IntStream.range(1, tasksToDisplay.size() + 1)
-                .forEach(index -> {
-                    if (index > 1) {
-                        sb.append("\n");
-                    }
-
-                    Task task = tasksToDisplay.get(index - 1);
-                    assert task != null : "Task in tasksToDisplay should not be null";
-
-                    sb.append(index).append(": ").append(task);
-                });
-
-        return sb.toString();
+    /**
+     * Appends a task with its number in the full list, separating entries with newlines.
+     */
+    private void appendTask(StringBuilder result, int index) {
+        if (!result.isEmpty()) {
+            result.append("\n");
+        }
+        result.append(index + 1).append(": ").append(tasks.get(index));
     }
 
     /**
@@ -150,17 +139,14 @@ public class TaskList {
         }
 
         String trimmedKeyword = keyword.trim();
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            // Invariant: all tasks stored in the list must be non-null
-            assert task != null : "Task in tasks should not be null";
-
-            if (task.getName().contains(trimmedKeyword)) {
-                matchingTasks.add(task);
+        StringBuilder result = new StringBuilder();
+        for (int index = 0; index < tasks.size(); index++) {
+            if (tasks.get(index).getName().contains(trimmedKeyword)) {
+                appendTask(result, index);
             }
         }
 
-        return matchingTasks.isEmpty() ? "No matching tasks found." : listTasks(matchingTasks);
+        return result.isEmpty() ? "No matching tasks found." : result.toString();
     }
 
     @Override

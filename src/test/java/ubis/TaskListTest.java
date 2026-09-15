@@ -103,8 +103,8 @@ public class TaskListTest {
         tasks.addTask(new Todo().initialise("buy bookshelf"));
         tasks.markTask(3);
         String before = tasks.toString();
-        assertEquals("1: [T][ ] read book\n2: [T][X] buy bookshelf", tasks.find("  book\t"));
-        assertEquals("1: [T][ ] Book tickets", tasks.find("Book"));
+        assertEquals("1: [T][ ] read book\n3: [T][X] buy bookshelf", tasks.find("  book\t"));
+        assertEquals("2: [T][ ] Book tickets", tasks.find("Book"));
         assertEquals("No matching tasks found.", tasks.find("BOOK"));
         assertEquals("Please provide a keyword to find.\nExample: find book", tasks.find(null));
         assertEquals(before, tasks.toString());
