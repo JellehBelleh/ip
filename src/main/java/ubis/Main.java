@@ -151,9 +151,7 @@ public class Main extends Application {
                 DialogBox.getUserDialog(input),
                 reply
         );
-        if (ubis.wasInputSuccessful()) {
-            userInput.clear();
-        }
+        userInput.clear();
         userInput.requestFocus();
         userInput.positionCaret(userInput.getLength());
         Platform.runLater(() -> revealReply(reply));
