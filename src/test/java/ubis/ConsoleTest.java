@@ -88,22 +88,7 @@ public class ConsoleTest {
         Path inputPath = temporaryDirectory.resolve("input.txt");
         Path outputPath = temporaryDirectory.resolve("output.txt");
         Files.writeString(inputPath, input);
-        List<String> command = new ArrayList<>();
-        command.add(Path.of(System.getProperty("java.home"), "bin", "java").toString());
-        command.add("-Duser.language=en");
-        command.add("-Duser.country=US");
-        // Forward coverage instrumentation, but keep child data separate from JUnit's data.
-        for (String argument : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            if (argument.startsWith("-javaagent:") && argument.contains("jacoco")) {
-                String destination = "destfile=" + System.getProperty("ubis.test.coverage.path");
-                command.add(argument.replaceAll("destfile=[^,]*",
-                        java.util.regex.Matcher.quoteReplacement(destination)));
-            }
-        }
-        command.add("-cp");
-        command.add(System.getProperty("ubis.test.classpath"));
-        command.add(mainClass);
-        Process process = new ProcessBuilder(command)
+        Process process = new ProcessBuilder(createCommand(mainClass))
                 .directory(temporaryDirectory.toFile())
                 .redirectInput(inputPath.toFile())
                 .redirectErrorStream(true)
@@ -119,4 +104,33 @@ public class ConsoleTest {
             process.waitFor(5, TimeUnit.SECONDS);
         }
     }
+
+    /**
+     * Builds the child JVM command with a fixed locale and the test classpath.
+     */
+    private List<String> createCommand(String mainClass) {
+        List<String> command = new ArrayList<>();
+        command.add(Path.of(System.getProperty("java.home"), "bin", "java").toString());
+        command.add("-Duser.language=en");
+        command.add("-Duser.country=US");
+        addCoverageArguments(command);
+        command.add("-cp");
+        command.add(System.getProperty("ubis.test.classpath"));
+        command.add(mainClass);
+        return command;
+    }
+
+    /**
+     * Forwards coverage instrumentation with a separate destination for child process data.
+     */
+    private void addCoverageArguments(List<String> command) {
+        for (String argument : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            if (argument.startsWith("-javaagent:") && argument.contains("jacoco")) {
+                String destination = "destfile=" + System.getProperty("ubis.test.coverage.path");
+                command.add(argument.replaceAll("destfile=[^,]*",
+                        java.util.regex.Matcher.quoteReplacement(destination)));
+            }
+        }
+    }
+
 }

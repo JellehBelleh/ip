@@ -18,10 +18,10 @@ public class Event extends Task {
     private LocalDate to;
 
     /**
-     * Initialises the event task from user input containing description, start date, and end date.
+     * Initializes the event task from user input containing description, start date, and end date.
      *
      * @param input Input string containing description, "/from &lt;start&gt;", and "/to &lt;end&gt;".
-     * @return Initialised Event task, or null if arguments/dates are invalid.
+     * @return Initialized Event task, or null if arguments/dates are invalid.
      */
     @Override
     public Task initialise(String input) {
@@ -32,17 +32,17 @@ public class Event extends Task {
         }
 
         String trimmedInput = input.trim();
-        int fromParameterCount = countOccurrences(FROM_PARAMETER_PATTERN, trimmedInput);
-        int toParameterCount = countOccurrences(TO_PARAMETER_PATTERN, trimmedInput);
-        if (fromParameterCount != 1) {
-            setInitialisationError("An event must contain exactly one \"/from\" parameter.");
-            return null;
-        }
-        if (toParameterCount != 1) {
-            setInitialisationError("An event must contain exactly one \"/to\" parameter.");
+        if (!hasValidParameters(trimmedInput)) {
             return null;
         }
 
+        return initialiseWithParameters(trimmedInput);
+    }
+
+    /**
+     * Extracts and initializes event fields after parameter counts have been validated.
+     */
+    private Task initialiseWithParameters(String trimmedInput) {
         Matcher fromParameter = FROM_PARAMETER_PATTERN.matcher(trimmedInput);
         Matcher toParameter = TO_PARAMETER_PATTERN.matcher(trimmedInput);
         fromParameter.find();
@@ -55,42 +55,82 @@ public class Event extends Task {
         String taskName = trimmedInput.substring(0, fromParameter.start()).trim();
         String fromDateText = trimmedInput.substring(fromParameter.end(), toParameter.start()).trim();
         String toDateText = trimmedInput.substring(toParameter.end()).trim();
-        if (taskName.isBlank()) {
-            setInitialisationError("Please provide an event name before \"/from\".");
-            return null;
-        }
-        if (fromDateText.isBlank()) {
-            setInitialisationError("Please provide a start date after \"/from\" in YYYY-MM-DD format.");
-            return null;
-        }
-        if (toDateText.isBlank()) {
-            setInitialisationError("Please provide an end date after \"/to\" in YYYY-MM-DD format.");
+        if (!hasRequiredFields(taskName, fromDateText, toDateText)) {
             return null;
         }
 
         this.name = taskName;
+        if (!parseDates(fromDateText, toDateText)) {
+            return null;
+        }
+
+        this.type = TaskType.EVENT;
+        return this;
+    }
+
+    /**
+     * Checks that each event parameter appears exactly once and records any error.
+     */
+    private boolean hasValidParameters(String trimmedInput) {
+        int fromParameterCount = countOccurrences(FROM_PARAMETER_PATTERN, trimmedInput);
+        int toParameterCount = countOccurrences(TO_PARAMETER_PATTERN, trimmedInput);
+        if (fromParameterCount != 1) {
+            setInitialisationError("An event must contain exactly one \"/from\" parameter.");
+            return false;
+        }
+        if (toParameterCount != 1) {
+            setInitialisationError("An event must contain exactly one \"/to\" parameter.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks that the event name and both date fields are present and records any error.
+     */
+    private boolean hasRequiredFields(String taskName, String fromDateText, String toDateText) {
+        if (taskName.isBlank()) {
+            setInitialisationError("Please provide an event name before \"/from\".");
+            return false;
+        }
+        if (fromDateText.isBlank()) {
+            setInitialisationError("Please provide a start date after \"/from\" in YYYY-MM-DD format.");
+            return false;
+        }
+        if (toDateText.isBlank()) {
+            setInitialisationError("Please provide an end date after \"/to\" in YYYY-MM-DD format.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Parses the event dates and checks their order, recording any validation error.
+     */
+    private boolean parseDates(String fromDateText, String toDateText) {
         try {
             this.from = LocalDate.parse(fromDateText);
         } catch (DateTimeParseException e) {
             setInitialisationError("The event start date is invalid. "
                     + "Use YYYY-MM-DD and enter a real calendar date.");
-            return null;
+            return false;
         }
         try {
             this.to = LocalDate.parse(toDateText);
         } catch (DateTimeParseException e) {
             setInitialisationError("The event end date is invalid. "
                     + "Use YYYY-MM-DD and enter a real calendar date.");
-            return null;
+            return false;
         }
 
         if (!from.isBefore(to)) {
             setInitialisationError("The event start date must be earlier than the end date.");
-            return null;
+            return false;
         }
 
-        this.type = TaskType.EVENT;
-        return this;
+        return true;
     }
 
     /**

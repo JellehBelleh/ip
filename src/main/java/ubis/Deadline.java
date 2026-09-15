@@ -16,10 +16,10 @@ public class Deadline extends Task {
     private LocalDate deadline;
 
     /**
-     * Initialises the deadline task from user input containing description and date.
+     * Initializes the deadline task from user input containing description and date.
      *
      * @param input Input string containing description and "/by &lt;date&gt;".
-     * @return Initialised Deadline task, or null if arguments/date are invalid.
+     * @return Initialized Deadline task, or null if arguments/date are invalid.
      */
     @Override
     public Task initialise(String input) {
@@ -30,6 +30,30 @@ public class Deadline extends Task {
         }
 
         String trimmedInput = input.trim();
+        Matcher byParameter = findByParameter(trimmedInput);
+        if (byParameter == null) {
+            return null;
+        }
+
+        String taskName = trimmedInput.substring(0, byParameter.start()).trim();
+        String dateText = trimmedInput.substring(byParameter.end()).trim();
+        if (!hasRequiredFields(taskName, dateText)) {
+            return null;
+        }
+
+        this.name = taskName;
+        if (!parseDate(dateText)) {
+            return null;
+        }
+
+        this.type = TaskType.DEADLINE;
+        return this;
+    }
+
+    /**
+     * Finds the sole deadline parameter, or records an error and returns null.
+     */
+    private Matcher findByParameter(String trimmedInput) {
         Matcher byParameter = BY_PARAMETER_PATTERN.matcher(trimmedInput);
         if (!byParameter.find()) {
             setInitialisationError("A deadline needs a \"/by\" parameter followed by its date.\n"
@@ -37,35 +61,44 @@ public class Deadline extends Task {
             return null;
         }
 
-        int parameterStart = byParameter.start();
-        int parameterEnd = byParameter.end();
-        if (byParameter.find()) {
+        Matcher remainingParameters = BY_PARAMETER_PATTERN.matcher(trimmedInput);
+        if (remainingParameters.find(byParameter.end())) {
             setInitialisationError("A deadline must contain exactly one \"/by\" parameter.");
             return null;
         }
 
-        String taskName = trimmedInput.substring(0, parameterStart).trim();
-        String dateText = trimmedInput.substring(parameterEnd).trim();
+        return byParameter;
+    }
+
+    /**
+     * Checks that the task name and deadline date are present and records any error.
+     */
+    private boolean hasRequiredFields(String taskName, String dateText) {
         if (taskName.isBlank()) {
             setInitialisationError("Please provide a task name before \"/by\".");
-            return null;
+            return false;
         }
         if (dateText.isBlank()) {
             setInitialisationError("Please provide a deadline date after \"/by\" in YYYY-MM-DD format.");
-            return null;
+            return false;
         }
 
-        this.name = taskName;
+        return true;
+    }
+
+    /**
+     * Parses the deadline date, recording an error if it is not a valid calendar date.
+     */
+    private boolean parseDate(String dateText) {
         try {
             this.deadline = LocalDate.parse(dateText);
         } catch (DateTimeParseException e) {
             setInitialisationError("The deadline date is invalid. "
                     + "Use YYYY-MM-DD and enter a real calendar date.");
-            return null;
+            return false;
         }
 
-        this.type = TaskType.DEADLINE;
-        return this;
+        return true;
     }
 
     @Override
