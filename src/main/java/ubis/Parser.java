@@ -174,9 +174,9 @@ public class Parser {
     }
 
     /**
-     * Initialises and adds a task, saving the updated list when successful.
+     * Initializes and adds a task, saving the updated list when successful.
      *
-     * @param task Task object used to initialise the requested task type.
+     * @param task Task object used to initialize the requested task type.
      * @param argument Task creation argument.
      * @return Response string generated for the command.
      */

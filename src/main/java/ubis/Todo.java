@@ -6,10 +6,10 @@ package ubis;
 public class Todo extends Task {
 
     /**
-     * Initialises the todo task with the given description.
+     * Initializes the todo task with the given description.
      *
      * @param input Task description.
-     * @return Initialised Todo task, or null if description is invalid.
+     * @return Initialized Todo task, or null if description is invalid.
      */
     @Override
     public Task initialise(String input) {

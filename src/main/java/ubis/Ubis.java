@@ -64,7 +64,7 @@ public class Ubis {
     }
 
     /**
-     * Main entry point for the application.
+     * Starts the console application.
      *
      * @param args Command-line arguments.
      */

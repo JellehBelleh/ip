@@ -39,18 +39,18 @@ public abstract class Task {
     }
 
     /**
-     * Initialises the task given the input argument string. Specific to each task type.
+     * Initializes the task given the input argument string. Specific to each task type.
      *
      * @param input String of arguments for task creation.
-     * @return The initialised task, or null if input was invalid.
+     * @return The initialized task, or null if input was invalid.
      */
     public abstract Task initialise(String input);
 
     /**
-     * Initialises the task given the arguments parsed from storage or test inputs.
+     * Initializes the task given the arguments parsed from storage or test inputs.
      *
      * @param segments Input argument segments.
-     * @return The initialised task, or null if arguments are invalid.
+     * @return The initialized task, or null if arguments are invalid.
      */
     public static Task initialise(String... segments) {
         if (segments == null || segments.length < 3) {
@@ -102,7 +102,7 @@ public abstract class Task {
     }
 
     /**
-     * Records why task initialisation failed so the parser can show the reason to the user.
+     * Records why task initialization failed so the parser can show the reason to the user.
      *
      * @param message User-facing validation message.
      */
@@ -111,7 +111,7 @@ public abstract class Task {
     }
 
     /**
-     * Returns the validation message recorded during a failed initialisation.
+     * Returns the validation message recorded during a failed initialization.
      *
      * @return User-facing validation message, or null if no validation error was recorded.
      */
@@ -143,7 +143,7 @@ public abstract class Task {
      * Creates a todo task from storage data.
      *
      * @param name Stored todo task name.
-     * @return Initialised todo task.
+     * @return Initialized todo task.
      */
     private static Task initialiseTodo(String name) {
         Task task = new Todo();
@@ -154,7 +154,7 @@ public abstract class Task {
      * Creates a deadline task from storage data.
      *
      * @param segments Stored deadline task segments.
-     * @return Initialised deadline task, or null when its date is missing.
+     * @return Initialized deadline task, or null when its date is missing.
      */
     private static Task initialiseDeadline(String[] segments) {
         if (segments.length < 4) {
@@ -170,7 +170,7 @@ public abstract class Task {
      * Creates an event task from storage data.
      *
      * @param segments Stored event task segments.
-     * @return Initialised event task, or null when a date is missing.
+     * @return Initialized event task, or null when a date is missing.
      */
     private static Task initialiseEvent(String[] segments) {
         if (segments.length < 5) {

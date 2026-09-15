@@ -117,7 +117,7 @@ public class TaskList {
     }
 
     /**
-     * Finds and lists all tasks whose names contain the given keyword.
+     * Finds tasks containing the keyword and lists them with their full-list task numbers.
      *
      * @param keyword String keyword to search for in task names.
      * @return Formatted list of matching tasks.
