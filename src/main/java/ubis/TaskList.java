@@ -33,16 +33,6 @@ public class TaskList {
     }
 
     /**
-     * Adds the given task to the task list with an option to suppress console output.
-     *
-     * @param task Task to be added.
-     * @param shouldPrint Kept for backward compatibility.
-     */
-    public void addTask(Task task, boolean shouldPrint) {
-        addTask(task);
-    }
-
-    /**
      * Removes a task from the list using its 1-based number and returns a status message.
      *
      * @param taskNumber 1-based number of the task to remove.
@@ -53,7 +43,6 @@ public class TaskList {
         if (index == INVALID_TASK_INDEX) {
             return getInvalidTaskNumberMessage(taskNumber);
         }
-
 
         String taskDescription = tasks.get(index).toString();
         tasks.remove(index);

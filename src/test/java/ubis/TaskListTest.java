@@ -40,9 +40,9 @@ public class TaskListTest {
         assertEquals("No tasks to show", tasks.listTasks());
         assertEquals("", tasks.addTask(null));
         assertEquals("added: [T][ ] read book", tasks.addTask(new Todo().initialise("read book")));
-        tasks.addTask(new Deadline().initialise("report /by 2026-09-30"), false);
-        tasks.addTask(new Event().initialise("trip /from 2026-09-01 /to 2026-09-03"), true);
-        tasks.addTask(null, false);
+        tasks.addTask(new Deadline().initialise("report /by 2026-09-30"));
+        tasks.addTask(new Event().initialise("trip /from 2026-09-01 /to 2026-09-03"));
+        tasks.addTask(null);
         assertEquals("1: [T][ ] read book\n2: [D][ ] report (by: Sep 30 2026)"
                 + "\n3: [E][ ] trip (from: Sep 1 2026 to: Sep 3 2026)", tasks.listTasks());
         assertEquals("{T}{0}{read book}\n{D}{0}{report}{2026-09-30}\n"

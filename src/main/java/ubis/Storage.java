@@ -149,7 +149,7 @@ public class Storage {
             for (int index = 0; index < lines.size(); index++) {
                 Task task = parseStoredTask(lines.get(index), index + 1);
                 if (task != null) {
-                    tasks.addTask(task, false);
+                    tasks.addTask(task);
                 } else {
                     malformedRecordCount++;
                 }

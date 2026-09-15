@@ -1,12 +1,7 @@
 package ubis;
 
-import java.util.Collections;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
@@ -28,16 +23,6 @@ public class DialogBox extends HBox {
         this.setPadding(new Insets(6, 10, 6, 10));
         this.setSpacing(10);
         this.getChildren().add(text);
-    }
-
-    /**
-     * Flips the dialog box orientation such that the message appears on the left side.
-     */
-    private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
-        setAlignment(Pos.TOP_LEFT);
     }
 
     /**
@@ -63,7 +48,7 @@ public class DialogBox extends HBox {
      */
     public static DialogBox getUbisDialog(String text) {
         DialogBox db = new DialogBox(text);
-        db.flip();
+        db.setAlignment(Pos.TOP_LEFT);
         db.text.setStyle("-fx-background-color: #DCEAF7; -fx-text-fill: #20364D; -fx-padding: 8px 12px; "
                 + "-fx-background-radius: 12px; -fx-border-color: #9FBBD5; -fx-border-radius: 12px; "
                 + "-fx-border-width: 1px; -fx-font-size: 13px;");

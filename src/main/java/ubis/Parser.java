@@ -12,8 +12,6 @@ public class Parser {
     private static final String SAVE_FAILURE_WARNING = "\nWarning: Your change is available for this session, "
             + "but it could not be saved to disk.";
 
-    private boolean wasInputSuccessful;
-
     private final Scanner scanner;
     private final Ubis ubis;
 
@@ -58,7 +56,6 @@ public class Parser {
      * @return Response string generated for the command.
      */
     public String handleInput(String input) {
-        wasInputSuccessful = false;
         if (input == null || input.trim().isEmpty()) {
             return Ui.Message.EMPTY_INPUT.getMessage();
         }
@@ -89,11 +86,9 @@ public class Parser {
             case "help":
                 return executeWithoutArgument(command, argument, Ui.Message.HELP.getMessage());
             case "mark":
-                return markTask(argument);
             case "unmark":
-                return unmarkTask(argument);
             case "delete":
-                return deleteTask(argument);
+                return executeTaskCommand(command, argument);
             case "todo":
                 return addTask(new Todo(), argument);
             case "deadline":
@@ -101,7 +96,6 @@ public class Parser {
             case "event":
                 return addTask(new Event(), argument);
             case "find":
-                wasInputSuccessful = argument != null && !argument.isBlank();
                 return ubis.getTaskList().find(argument);
             default:
                 return "Unknown command \"" + command + "\". Type \"help\" for commands!";
@@ -120,79 +114,43 @@ public class Parser {
         if (argument != null) {
             return "The \"" + command + "\" command does not accept any arguments.";
         }
-        wasInputSuccessful = true;
         return response;
     }
 
     /**
-     * Marks a task after validating its task number.
-     *
-     * @param argument Task number argument.
-     * @return Response string generated for the command.
+     * Validates a task number and saves only successful mark, unmark, or delete operations.
      */
-    private String markTask(String argument) {
+    private String executeTaskCommand(String command, String argument) {
         if (argument == null) {
-            return "Please add the task number you want to mark!\n"
-                    + "Example: \"mark 4\" if you want to mark the fourth task.";
+            return "Please add the task number you want to " + command + "!\n"
+                    + "Example: \"" + command + " 4\" if you want to " + command + " the fourth task.";
         }
         if (!argument.matches("[0-9]+")) {
             return getInvalidTaskNumberMessage(argument);
         }
         try {
             int taskNumber = Integer.parseInt(argument.trim());
-            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
-            String response = ubis.getTaskList().markTask(taskNumber);
-            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
+            boolean hasTask = ubis.getTaskList().hasTaskNumber(taskNumber);
+            String response = applyTaskCommand(command, taskNumber);
+            return hasTask ? saveAndAppendWarning(response) : response;
         } catch (NumberFormatException e) {
             return getTaskNumberTooLargeMessage();
         }
     }
 
     /**
-     * Unmarks a task after validating its task number.
-     *
-     * @param argument Task number argument.
-     * @return Response string generated for the command.
+     * Applies a numbered command, letting the task list report nonexistent task numbers.
      */
-    private String unmarkTask(String argument) {
-        if (argument == null) {
-            return "Please add the task number you want to unmark!\n"
-                    + "Example: \"unmark 4\" if you want to unmark the fourth task.";
-        }
-        if (!argument.matches("[0-9]+")) {
-            return getInvalidTaskNumberMessage(argument);
-        }
-        try {
-            int taskNumber = Integer.parseInt(argument.trim());
-            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
-            String response = ubis.getTaskList().unmarkTask(taskNumber);
-            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
-        } catch (NumberFormatException e) {
-            return getTaskNumberTooLargeMessage();
-        }
-    }
-
-    /**
-     * Deletes a task after validating its task number.
-     *
-     * @param argument Task number argument.
-     * @return Response string generated for the command.
-     */
-    private String deleteTask(String argument) {
-        if (argument == null) {
-            return "Please add the task number you want to delete!\n"
-                    + "Example: \"delete 4\" if you want to delete the fourth task.";
-        }
-        if (!argument.matches("[0-9]+")) {
-            return getInvalidTaskNumberMessage(argument);
-        }
-        try {
-            int taskNumber = Integer.parseInt(argument.trim());
-            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
-            String response = ubis.getTaskList().removeTask(taskNumber);
-            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
-        } catch (NumberFormatException e) {
-            return getTaskNumberTooLargeMessage();
+    private String applyTaskCommand(String command, int taskNumber) {
+        switch (command) {
+            case "mark":
+                return ubis.getTaskList().markTask(taskNumber);
+            case "unmark":
+                return ubis.getTaskList().unmarkTask(taskNumber);
+            case "delete":
+                return ubis.getTaskList().removeTask(taskNumber);
+            default:
+                throw new IllegalArgumentException("Unsupported task command: " + command);
         }
     }
 
@@ -229,7 +187,6 @@ public class Parser {
             return errorMessage == null ? "The task details are invalid. Please try again." : errorMessage;
         }
 
-        wasInputSuccessful = true;
         String response = ubis.getTaskList().addTask(initialisedTask);
         return saveAndAppendWarning(response);
     }
@@ -258,13 +215,6 @@ public class Parser {
         }
 
         return false;
-    }
-
-    /**
-     * Returns whether the last input was accepted, including changes that could not be saved.
-     */
-    public boolean wasInputSuccessful() {
-        return wasInputSuccessful;
     }
 
     /**
