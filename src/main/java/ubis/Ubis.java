@@ -9,6 +9,7 @@ public class Ubis {
     private TaskList taskList;
     private Parser parser;
     private String startupWarning;
+    private boolean wasInputSuccessful;
 
     private final Path savePath;
 
@@ -80,13 +81,23 @@ public class Ubis {
      * @return Chatbot response string.
      */
     public String getResponse(String input) {
+        wasInputSuccessful = false;
         try {
-            return parser.handleInput(input);
+            String response = parser.handleInput(input);
+            wasInputSuccessful = parser.wasInputSuccessful();
+            return response;
         } catch (RuntimeException e) {
             System.err.println("Unexpected error while processing a command:");
             e.printStackTrace();
             return Ui.Message.UNEXPECTED_ERROR.getMessage();
         }
+    }
+
+    /**
+     * Returns whether the last command was accepted so the GUI can retain rejected input.
+     */
+    public boolean wasInputSuccessful() {
+        return wasInputSuccessful;
     }
 
     /**

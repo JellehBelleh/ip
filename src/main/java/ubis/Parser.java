@@ -12,6 +12,8 @@ public class Parser {
     private static final String SAVE_FAILURE_WARNING = "\nWarning: Your change is available for this session, "
             + "but it could not be saved to disk.";
 
+    private boolean wasInputSuccessful;
+
     private final Scanner scanner;
     private final Ubis ubis;
 
@@ -56,6 +58,7 @@ public class Parser {
      * @return Response string generated for the command.
      */
     public String handleInput(String input) {
+        wasInputSuccessful = false;
         if (input == null || input.trim().isEmpty()) {
             return Ui.Message.EMPTY_INPUT.getMessage();
         }
@@ -98,6 +101,7 @@ public class Parser {
             case "event":
                 return addTask(new Event(), argument);
             case "find":
+                wasInputSuccessful = argument != null && !argument.isBlank();
                 return ubis.getTaskList().find(argument);
             default:
                 return "Unknown command \"" + command + "\". Type \"help\" for commands!";
@@ -116,6 +120,7 @@ public class Parser {
         if (argument != null) {
             return "The \"" + command + "\" command does not accept any arguments.";
         }
+        wasInputSuccessful = true;
         return response;
     }
 
@@ -134,8 +139,10 @@ public class Parser {
             return getInvalidTaskNumberMessage(argument);
         }
         try {
-            String response = ubis.getTaskList().markTask(Integer.parseInt(argument.trim()));
-            return saveAndAppendWarning(response);
+            int taskNumber = Integer.parseInt(argument.trim());
+            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
+            String response = ubis.getTaskList().markTask(taskNumber);
+            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
         } catch (NumberFormatException e) {
             return getTaskNumberTooLargeMessage();
         }
@@ -156,8 +163,10 @@ public class Parser {
             return getInvalidTaskNumberMessage(argument);
         }
         try {
-            String response = ubis.getTaskList().unmarkTask(Integer.parseInt(argument.trim()));
-            return saveAndAppendWarning(response);
+            int taskNumber = Integer.parseInt(argument.trim());
+            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
+            String response = ubis.getTaskList().unmarkTask(taskNumber);
+            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
         } catch (NumberFormatException e) {
             return getTaskNumberTooLargeMessage();
         }
@@ -178,8 +187,10 @@ public class Parser {
             return getInvalidTaskNumberMessage(argument);
         }
         try {
-            String response = ubis.getTaskList().removeTask(Integer.parseInt(argument.trim()));
-            return saveAndAppendWarning(response);
+            int taskNumber = Integer.parseInt(argument.trim());
+            wasInputSuccessful = ubis.getTaskList().hasTaskNumber(taskNumber);
+            String response = ubis.getTaskList().removeTask(taskNumber);
+            return wasInputSuccessful ? saveAndAppendWarning(response) : response;
         } catch (NumberFormatException e) {
             return getTaskNumberTooLargeMessage();
         }
@@ -218,6 +229,7 @@ public class Parser {
             return errorMessage == null ? "The task details are invalid. Please try again." : errorMessage;
         }
 
+        wasInputSuccessful = true;
         String response = ubis.getTaskList().addTask(initialisedTask);
         return saveAndAppendWarning(response);
     }
@@ -246,6 +258,13 @@ public class Parser {
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the last input was accepted, including changes that could not be saved.
+     */
+    public boolean wasInputSuccessful() {
+        return wasInputSuccessful;
     }
 
     /**

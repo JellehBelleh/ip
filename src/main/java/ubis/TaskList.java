@@ -175,6 +175,13 @@ public class TaskList {
     }
 
     /**
+     * Returns whether the list contains the given one-based task number.
+     */
+    public boolean hasTaskNumber(int taskNumber) {
+        return getTaskIndex(taskNumber) != INVALID_TASK_INDEX;
+    }
+
+    /**
      * Converts a one-based task number into a zero-based list index.
      *
      * @param taskNumber One-based task number.

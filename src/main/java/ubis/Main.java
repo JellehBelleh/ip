@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
     private final Ubis ubis = new Ubis();
+    private final CommandHistory commandHistory = new CommandHistory();
     private ScrollPane scrollPane;
     private VBox dialogContainer;
     private TextField userInput;
@@ -77,7 +79,7 @@ public class Main extends Application {
 
         scrollPane.setPrefSize(385, 535);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVvalue(1.0);
         scrollPane.setFitToWidth(true);
 
@@ -106,10 +108,19 @@ public class Main extends Application {
      * @param stage Primary application stage used when handling user input.
      */
     private void configureEventHandlers(Stage stage) {
-        dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
-
-        sendButton.setOnMouseClicked((event) -> handleUserInput(stage));
+        sendButton.setOnAction((event) -> handleUserInput(stage));
         userInput.setOnAction((event) -> handleUserInput(stage));
+        userInput.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.UP) {
+                userInput.setText(commandHistory.previous(userInput.getText()));
+            } else if (event.getCode() == KeyCode.DOWN) {
+                userInput.setText(commandHistory.next(userInput.getText()));
+            } else {
+                return;
+            }
+            userInput.positionCaret(userInput.getLength());
+            event.consume();
+        });
     }
 
     /**
@@ -133,15 +144,41 @@ public class Main extends Application {
             return;
         }
 
+        commandHistory.add(input);
         String response = ubis.getResponse(input);
+        DialogBox reply = DialogBox.getUbisDialog(response);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input),
-                DialogBox.getUbisDialog(response)
+                reply
         );
-        userInput.clear();
+        if (ubis.wasInputSuccessful()) {
+            userInput.clear();
+        }
+        userInput.requestFocus();
+        userInput.positionCaret(userInput.getLength());
+        Platform.runLater(() -> revealReply(reply));
 
         if ("bye".equals(input.trim())) {
             Platform.exit();
         }
     }
+
+    /**
+     * Reveals a new reply after layout, showing its beginning when it exceeds the viewport.
+     * Resizing does not invoke this method, so it does not force a jump to the latest reply.
+     */
+    private void revealReply(DialogBox reply) {
+        scrollPane.applyCss();
+        scrollPane.layout();
+        double viewportHeight = scrollPane.getViewportBounds().getHeight();
+        double scrollableHeight = dialogContainer.getHeight() - viewportHeight;
+        if (scrollableHeight <= 0) {
+            scrollPane.setVvalue(0);
+        } else if (reply.getHeight() > viewportHeight) {
+            scrollPane.setVvalue(Math.min(1, reply.getBoundsInParent().getMinY() / scrollableHeight));
+        } else {
+            scrollPane.setVvalue(1);
+        }
+    }
+
 }
