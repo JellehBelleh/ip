@@ -27,6 +27,13 @@ repositories {
 
 dependencies {
     String jUnitVersion = '5.14.4'
+    String javaFxVersion = '21'
+
+    // JavaFX uses platform-specific native graphics libraries. Include the platforms used by
+    // the course smoke tests so the shadow JAR works regardless of which OS builds it.
+    runtimeOnly "org.openjfx:javafx-graphics:${javaFxVersion}:win"
+    runtimeOnly "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
+    runtimeOnly "org.openjfx:javafx-graphics:${javaFxVersion}:mac-aarch64"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-params:${jUnitVersion}"
